@@ -1,6 +1,9 @@
-// "Your data, your choice" section: on-prem or cloud. Injected by build-site.mjs after "How it works".
-// 4 Nov (Catalin): customers do not want their production data on the internet. Show the on-prem option first,
-// with a small PanelPal computer in the building, and the cloud as the simple option.
+// "Your data, your choice" section: cloud or on-prem. Injected by build-site.mjs after "How it works".
+// 4 Nov (Catalin): customers do not want their production data on the internet, so on-prem is offered.
+// 20 Nov (sam-eee): the cloud is the main option, shown first. On-prem is the extra for sites whose data must stay in the building,
+// with the diagram and quote below the two cards. "How we look after your data" sits between them, so the cloud reads as
+// private and safe, and on-prem as a choice for sites with rules, not as the only safe option.
+// Only promise what is true: no certification claims (the build fails on "certified").
 // Inline SVG only (no image files). Colours are design/tokens.css variables where a token exists.
 
 const lock = (x, y, s = 1, fill = "#2874d2") => `<g transform="translate(${x} ${y}) scale(${s})">
@@ -56,12 +59,12 @@ const ART = `<svg class="dp-art" viewBox="0 0 600 340" role="img" aria-labelledb
   <text x="368" y="58" font-size="11.5" fill="#5f5f5d" text-anchor="middle">Your dashboard</text>
   <!-- cut link to the cloud -->
   <path d="M454 214 H 520" stroke="#c1c3bc" stroke-width="2.5" stroke-dasharray="4 5"/>
-  <circle cx="488" cy="214" r="13" fill="#fff" stroke="#d03b3b" stroke-width="2.5"/>
-  <path d="M482 208 l12 12 M494 208 l-12 12" stroke="#d03b3b" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="488" cy="214" r="13" fill="#fff" stroke="#8e8b8b" stroke-width="2.5"/>
+  <path d="M482 208 l12 12 M494 208 l-12 12" stroke="#8e8b8b" stroke-width="2.6" stroke-linecap="round"/>
   <path d="M528 222 a16 16 0 0 1 2 -31 a22 22 0 0 1 42 -4 a15 15 0 0 1 14 25 a12 12 0 0 1 -6 10 z" fill="#f3f3f2" stroke="#c1c3bc" stroke-width="2"/>
-  <text x="556" y="250" font-size="12" font-weight="600" fill="#b42d2d" text-anchor="middle">Nothing</text>
-  <text x="556" y="265" font-size="12" font-weight="600" fill="#b42d2d" text-anchor="middle">leaves</text>
-  <text x="556" y="280" font-size="12" font-weight="600" fill="#b42d2d" text-anchor="middle">your site</text>
+  <text x="556" y="250" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">Nothing</text>
+  <text x="556" y="265" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">leaves</text>
+  <text x="556" y="280" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">your site</text>
   </g>
 </svg>`;
 
@@ -69,24 +72,33 @@ const ICON_BOX = `<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="13"
 const ICON_CLOUD = `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M11 30 a7 7 0 0 1 1 -14 a10 10 0 0 1 19 -2 a7 7 0 0 1 -1 16 z" fill="#e5effa" stroke="#2874d2" stroke-width="2"/></svg>`;
 
 export const DATA_SECTION_HTML = `<section id="data"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">Your data, your choice</p><h2 class="h2">Run it in your building, or in our cloud.</h2><p>Every reading belongs to you. You choose where it lives.</p></div>
+  <div class="sec-head"><p class="eyebrow">Your data, your choice</p><h2 class="h2">We run it in our cloud. Or you run it in your building.</h2><p>Every reading belongs to you, wherever it lives. Most sites start in our cloud, where your data is private to your company. If your rules say it must stay on site, add on-prem.</p></div>
+  <div class="dp">
+    <div class="card dp-opt on">
+      <div class="dp-h">${ICON_CLOUD}<div><span class="dp-tag">Recommended</span><h3>Cloud</h3><span class="dp-sub">Private to your company. We run it for you.</span></div></div>
+      <ul><li>Your data is encrypted, and you control who it is shared with</li><li>Nothing to install or look after</li><li>See your sites from anywhere</li><li>Updates are done for you</li><li>The quickest way to start</li></ul>
+    </div>
+    <div class="card dp-opt">
+      <div class="dp-h">${ICON_BOX}<div><span class="dp-tag soft">Extra option</span><h3>On-prem</h3><span class="dp-sub">Your own computer, in your building</span></div></div>
+      <ul><li>A small PanelPal computer runs on your site</li><li>The cameras send readings only to it, over your own network</li><li>Readings, history and dashboards stay in your building</li><li>You decide if anything goes outside</li></ul>
+    </div>
+  </div>
+  <h3 class="dp-more">How we look after your data</h3>
+  <ul class="dp-care">
+    <li><b>Encrypted</b><span>Readings are encrypted on the way to us and in storage.</span></li>
+    <li><b>Only your team</b><span>Each person sees only the sites and machines that you give them.</span></li>
+    <li><b>Never sold</b><span>We never sell your data or share it with anyone else.</span></li>
+    <li><b>Yours to take</b><span>Export your readings at any time, or ask us to delete them.</span></li>
+    <li><b>Every change logged</b><span>Every sign-in, setting change and export is recorded.</span></li>
+  </ul>
+  <h3 class="dp-more">Need your data to stay on site?</h3>
   <div class="dp-top">
     <figure class="dp-fig">${ART.replace(/\n\s*/g, "")}<figcaption>On-prem: the cameras talk only to a small PanelPal computer on your site.</figcaption></figure>
     <blockquote class="dp-quote">
       ${lockIcon("dp-lock")}
       <p class="q">Your data is yours. <em>Keep it in your building.</em></p>
-      <p>Output, cycle times and machine settings show how your business runs. They are your trade secrets. With on-prem, they stay on your own network and never go on the internet.</p>
+      <p>Some sites have rules that production data must not leave the building. On-prem is for them: readings stay on your own network, and nothing goes outside unless you choose.</p>
     </blockquote>
-  </div>
-  <div class="dp">
-    <div class="card dp-opt on">
-      <div class="dp-h">${ICON_BOX}<div><span class="dp-tag">Most private</span><h3>On-prem</h3><span class="dp-sub">Your own computer, in your building</span></div></div>
-      <ul><li>A small PanelPal computer runs on your site</li><li>The cameras send readings only to it, over your own network</li><li>Readings, history and dashboards stay in your building</li><li>You decide if anything goes outside</li></ul>
-    </div>
-    <div class="card dp-opt">
-      <div class="dp-h">${ICON_CLOUD}<div><span class="dp-tag soft">Simplest</span><h3>Cloud</h3><span class="dp-sub">We run it for you</span></div></div>
-      <ul><li>Nothing to install or look after</li><li>See your sites from anywhere</li><li>Updates are done for you</li><li>The quickest way to start</li></ul>
-    </div>
   </div>
   <p class="note">Tell us which one you need when you book your demo. The demo on this site shows both options.</p>
 </div></section>
@@ -103,9 +115,15 @@ export const DATA_SECTION_CSS = `.dp-top{display:grid;grid-template-columns:minm
 .dp-quote{margin:0;background:var(--color-ink);color:#fff;border-radius:var(--radius-card);padding:36px 34px;display:flex;flex-direction:column;justify-content:center}
 .dp-lock{width:44px;height:44px;margin-bottom:18px}
 .dp-quote .q{font-family:var(--font-display);font-size:34px;line-height:1.15;margin:0 0 16px;letter-spacing:-.01em}
-.dp-quote .q em{font-style:italic;color:#9cc4f2}
+.dp-quote .q em{font-style:normal;color:#9cc4f2}
 .dp-quote p:not(.q){margin:0;color:#d8d8d4;font-size:var(--type-base);line-height:var(--leading-relaxed)}
-.dp{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+.dp{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.dp-more{font-size:var(--type-lg);margin:40px 0 14px}
+.dp-care{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px 20px}
+.dp-care li{margin:0;padding:16px 18px;border-radius:var(--radius-card);background:var(--color-surface-2)}
+.dp-care b{display:block;margin-bottom:4px;font-size:var(--type-sm)}
+.dp-care span{font-size:var(--type-sm);color:var(--color-muted)}
+@media (max-width:1000px){.dp-care{grid-template-columns:1fr 1fr}}
 .dp-opt{padding:24px 26px}
 .dp-opt.on{border:2px solid var(--color-accent)}
 .dp-h{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
@@ -120,7 +138,7 @@ export const DATA_SECTION_CSS = `.dp-top{display:grid;grid-template-columns:minm
 .own{display:flex;gap:10px;align-items:center;margin:22px 0 0;font-size:var(--type-sm);color:var(--color-muted)}
 .own svg{width:28px;height:28px;flex:none}
 .own b{color:var(--color-text)}
-@media (max-width:760px){.dp-top,.dp{grid-template-columns:1fr}.dp-fig{padding:14px 10px 12px}.dp-quote{padding:28px 24px}.dp-quote .q{font-size:28px}}`;
+@media (max-width:760px){.dp-top,.dp,.dp-care{grid-template-columns:1fr}.dp-fig{padding:14px 10px 12px}.dp-quote{padding:28px 24px}.dp-quote .q{font-size:28px}}`;
 
 // Hero line under the buttons: links to the section.
-export const HERO_LINE_HTML = `\n    <p class="own">${lockIcon()}<span><b>Your data stays yours.</b> Run it on site, or in our cloud. <a href="#data">See how</a></span></p>`;
+export const HERO_LINE_HTML = `\n    <p class="own">${lockIcon()}<span><b>Your data stays yours.</b> We run it in our cloud, or on your own site. <a href="#data">See how</a></span></p>`;

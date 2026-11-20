@@ -6,7 +6,6 @@ import { readFileSync, writeFileSync, mkdirSync, cpSync, rmSync, existsSync, rea
 import { resolve } from "node:path";
 import { READS_GALLERY_HTML, READS_GALLERY_CSS } from "./reads-gallery.mjs";
 import { DATA_SECTION_HTML, DATA_SECTION_CSS, HERO_LINE_HTML } from "./data-section.mjs";
-import { SECURITY_SECTION_HTML, SECURITY_SECTION_CSS } from "./security-section.mjs";
 const ROOT = resolve(new URL("..", import.meta.url).pathname);
 const D = `${ROOT}/design`, SITE = `${ROOT}/site`, PUB = `${SITE}/public`;
 const DEMO_URL = process.env.DEMO_URL ?? "http://localhost:5190/";
@@ -26,7 +25,7 @@ writeFileSync(`${PUB}/robots.txt`, "User-agent: *\nDisallow: /\n");
 // Fonts: local copies of Inter, Source Serif 4 and JetBrains Mono (latin).
 const FS = `${SITE}/node_modules/@fontsource`;
 const fonts = [["Inter", "inter", [[400, "normal"], [500, "normal"], [600, "normal"], [700, "normal"]]],
-  ["Source Serif 4", "source-serif-4", [[400, "normal"], [400, "italic"], [600, "normal"]]],
+  ["Source Serif 4", "source-serif-4", [[400, "normal"], [600, "normal"]]],
   ["JetBrains Mono", "jetbrains-mono", [[400, "normal"], [500, "normal"]]]];
 let css = "/* Local fonts (copied from @fontsource). */\n";
 for (const [family, pkg, faces] of fonts) for (const [w, st] of faces) {
@@ -55,7 +54,8 @@ if (HERO_PHONE) h = h.replace('<img class="phone" src="img/s6-logging.png" alt="
   '<img class="phone" src="img/hero-phone-cnc3.png" alt="Phone screen from the PanelPal demo: CNC mill 3 logging live. Spindle speed 8,000 rpm, load 42 %, parts today 312, uptime today 87 %. Example data.">');
 // Copy fixes (approved): cost wording, and a "Planned" label on every promise that is not yet a product fact.
 const must = (from, to) => { if (!h.includes(from)) throw new Error(`copy fix: text not found: ${from}`); h = h.replace(from, to); };
-must("<b>Camera, about $10</b>", "<b>Target cost about $10</b>");
+// 20 Nov (sam-eee): no camera price in the setup flow ("Feed" row). Was "Target cost about $10".
+must("<b>Camera, about $10</b>", "<b>PanelPal camera</b>");
 // 31 Oct 17:33 (Catalin): no "Planned" labels anywhere on the site (plans list, offer lines, privacy cards).
 // Camera images with no text over them (tools/camera): the hero CNC view and the growth chamber view.
 must('<img class="cam" src="img/cnc-hmi-camera-view.png" alt="Camera view of a CNC mill operator screen. Spindle speed, spindle load, parts today and alarm are each boxed and labelled with a confidence score. Example data.">',
@@ -73,27 +73,45 @@ if (/esp32|xiao/i.test(h)) throw new Error("chip name in site HTML");
 // Make every remaining form inert, too.
 h = h.replace(/<form(?![^>]*onsubmit)/g, '<form onsubmit="return false"');
 if (!/name="robots" content="noindex/.test(h)) h = h.replace("<head>", '<head>\n<meta name="robots" content="noindex, nofollow">');
-// 30 Oct 22:38 (Catalin via COF): the #join form opens an email to contact@panelpal.co.uk. This replaces the "inert form" rule for #join only.
-// No network call, no form service, no stored data. With JavaScript off, the form action is a plain mailto (text/plain) fallback.
+// 30 Oct 22:38 (Catalin via COF): the #join form opened an email to contact@panelpal.co.uk (mailto, no form service).
+// 20 Nov (sam-eee): the #join form now sends through Web3Forms, which emails each request to contact@panelpal.co.uk.
+// The access key is public by design (it only lets this form send to our inbox). The "botcheck" box is a hidden spam trap.
+// With JavaScript on, the page sends it and shows the result in place. With JavaScript off, it posts to Web3Forms directly.
+const WEB3FORMS_KEY = "ece81194-f64e-46e6-8ba4-3b2ec0afff4e";
 must(`    <form class="wl" onsubmit="return false" aria-label="Join the waitlist (example form, not live)">
       <label>Work email<input type="email" placeholder="you@example.com"></label>
       <label>What do you want to monitor?<select><option>`,
-`    <form class="wl" id="join-form" action="mailto:contact@panelpal.co.uk?subject=PanelPal%20demo%20request" method="post" enctype="text/plain" aria-label="Book a demo by email">
-      <label>Work email<input type="email" name="Work email" placeholder="you@example.com" required></label>
-      <label>What do you want to monitor?<select name="What do you want to monitor?"><option>`);
+`    <form class="wl" id="join-form" action="https://api.web3forms.com/submit" method="post" aria-label="Contact us">
+      <input type="hidden" name="access_key" value="${WEB3FORMS_KEY}">
+      <input type="hidden" name="subject" value="PanelPal contact request">
+      <input type="hidden" name="from_name" value="PanelPal website">
+      <input type="checkbox" name="botcheck" class="wl-trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label>Name<input type="text" name="name" autocomplete="name" required></label>
+      <label>Work email<input type="email" name="email" placeholder="you@example.com" autocomplete="email" required></label>
+      <label>What do you want to monitor?<select name="monitor"><option>`);
 must(`      <button class="btn primary" type="submit">Join the waitlist</button>
       <span class="fine"><b>Example form · not live.</b> This form does not send anything.</span>
     </form>`,
-`      <button class="btn primary" type="submit">Book a demo</button>
-      <span class="fine">This opens your email app with a message to <a href="mailto:contact@panelpal.co.uk">contact@panelpal.co.uk</a>. Nothing goes out until you send it.</span>
+`      <label>Tell us about your site and how we can help<textarea name="message" rows="4"></textarea></label>
+      <button class="btn primary" type="submit">Send</button>
+      <p class="wl-status" role="status" aria-live="polite"></p>
+      <p class="wl-mail">Prefer email? Write to us at <a href="mailto:contact@panelpal.co.uk">contact@panelpal.co.uk</a></p>
+      <span class="fine">We use your details only to reply to you.</span>
     </form>
-    <script>document.getElementById("join-form").addEventListener("submit",function(e){e.preventDefault();var f=e.currentTarget,l=[];f.querySelectorAll("label").forEach(function(x){var c=x.querySelector("input,select,textarea");if(c)l.push(x.firstChild.textContent.trim()+": "+c.value.trim())});location.href="mailto:contact@panelpal.co.uk?subject="+encodeURIComponent("PanelPal demo request")+"&body="+encodeURIComponent(l.join("\\r\\n"))})</script>`);
+    <script>(function(){var f=document.getElementById("join-form"),s=f.querySelector(".wl-status"),b=f.querySelector("button[type=submit]");
+f.addEventListener("submit",function(e){e.preventDefault();b.disabled=true;s.className="wl-status";s.textContent="Sending…";
+fetch(f.action,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(f)))})
+.then(function(r){return r.json().then(function(j){if(!r.ok||!j.success)throw 0})})
+.then(function(){f.reset();s.className="wl-status ok";s.textContent="Thank you. We will reply by email soon."})
+.catch(function(){s.className="wl-status err";s.innerHTML='That did not send. Please try again, or email <a href="mailto:contact@panelpal.co.uk">contact@panelpal.co.uk</a>.'})
+.finally(function(){b.disabled=false})})})()</script>`);
+h = h.replace("</head>", "<style>form.wl textarea{border:1px solid var(--color-border-strong);border-radius:var(--radius-control);padding:10px 12px;font:inherit;background:#fff;width:100%;margin-top:6px;resize:vertical}.wl-trap{display:none}.wl-mail{margin:6px 0 0;padding-top:14px;border-top:1px solid var(--color-border);font-size:var(--type-base)}.wl-mail a{font-weight:600;color:var(--color-accent-strong)}.wl-status{margin:0;font-size:var(--type-sm);min-height:0}.wl-status:empty{display:none}.wl-status.ok{color:var(--color-running)}.wl-status.err{color:#b42d2d}</style>\n</head>");
 if (!h.includes('<a href="mailto:contact@panelpal.co.uk">contact@panelpal.co.uk</a>')) throw new Error("join: visible contact link missing");
 // 30 Oct 22:58 (Reviewer H1, allowed by Catalin): no waitlist. The CTA and both buttons point to "Book a demo" (email).
 // 31 Oct 17:33 (Catalin): the hero keeps one "Book a demo" button and "Try the demo". Remove the second (soft) button.
 must('\n      <a class="btn soft" href="#join">Join the waitlist</a>', '');
 must('<a class="btn ghost" href="#join">Join the waitlist</a>', '<a class="btn ghost" href="#join">Book a demo</a>');
-must('Book a short demo, or join the waitlist and we will tell you when it is ready.', 'Book a short demo. Send us an email and we will reply.');
+must('Book a short demo, or join the waitlist and we will tell you when it is ready.', 'Book a short demo. Tell us what you want to monitor and we will reply by email.');
 if (/wait ?list/i.test(h.replace(/<[^>]*>/g, ""))) throw new Error("visible 'waitlist' text left in site HTML");
 // Title, meta description, banner, footer and plans note: remove only that one word (the match texts below must quote the source). "Demo" and "example data" stay.
 // Camera section (Grow Chamber 3 card): temperature labels that match the photo. Same order and the same colours (high, check, low).
@@ -110,18 +128,19 @@ must('<p>Each value gets the reader that suits it. The vision model marks the ar
   '<p>Each value gets the reader that suits it. The vision model marks the area one time, and you confirm it.</p></div>\n  ' + READS_GALLERY_HTML + '<table class="tbl">');
 h = h.replace("</head>", `<style>${READS_GALLERY_CSS}</style>\n</head>`);
 // 4 Nov (Catalin): on-prem or cloud. Customers keep production data private, so the site shows an on-prem option first.
+// 20 Nov (sam-eee): the cloud is now the main option and on-prem the extra (tools/data-section.mjs).
 // A hero line, a nav link, a "Your data, your choice" section after "How it works" (tools/data-section.mjs), and the privacy card.
 must('<a href="#how">How it works</a>', '<a href="#how">How it works</a><a href="#data">Your data</a>');
 must('\n    <div class="where">', HERO_LINE_HTML + '\n    <div class="where">');
+// 20 Nov (sam-eee): remove the site-type tags under the hero line (Machine shops, Labs, Kitchens ...).
+must('\n    <div class="where"><span>Machine shops</span><span>Labs</span><span>Kitchens</span><span>Growth rooms</span><span>Plant rooms</span><span>Any site with a screen or gauge</span></div>', '');
 must('<section id="camera">', DATA_SECTION_HTML + '<section id="camera">');
 must('<div class="card"><h3>Where your data is stored</h3><p>We will confirm this before launch. Ask us about it in your demo.</p></div>',
-  '<div class="card"><h3>You choose where your data is stored</h3><p>On-prem, on a PanelPal computer in your building. Or in our cloud. <a href="#data">Compare the two</a>.</p></div>');
+  '<div class="card"><h3>You choose where your data is stored</h3><p>Privately in our cloud. Or, if it must stay on site, on a PanelPal computer in your building. <a href="#data">Compare the two</a>.</p></div>');
 h = h.replace("</head>", `<style>${DATA_SECTION_CSS}</style>\n</head>`);
-// 4 Nov (Catalin): "Security standards" section before "Book a demo" (tools/security-section.mjs), with a nav and footer link.
-// Each standard shows an honest status: PanelPal is not certified yet.
-must('<section id="join">', SECURITY_SECTION_HTML + '<section id="join">');
-h = h.replaceAll('<a href="#privacy">Privacy &amp; data</a>', '<a href="#privacy">Privacy &amp; data</a><a href="#security">Security</a>');
-h = h.replace("</head>", `<style>${SECURITY_SECTION_CSS}</style>\n</head>`);
+// 20 Nov (sam-eee): no serif italics anywhere. Accent phrases in serif headings stay coloured but upright.
+h = h.replace("</head>", "<style>.hero h1 em,.dp-quote .q em{font-style:normal}</style>\n</head>");
+// 20 Nov (sam-eee): the "Security standards" section was removed (was tools/security-section.mjs).
 if (/\bcertified\b(?! yet)/i.test(h.replace(/<[^>]*>/g, ""))) throw new Error("'certified' claim in site HTML: PanelPal holds no certificate yet");
 const mustAll = (from, to, n) => { const c = h.split(from).length - 1; if (c !== n) throw new Error(`wording fix: expected ${n} x ${from}, found ${c}`); h = h.replaceAll(from, to); };
 // 30 Oct 22:32 (Catalin, voice): "What it can read" table. Keep the table and every row. Remove the Status column. All rows show as current functionality.
@@ -140,7 +159,54 @@ if (/concept/i.test(h)) throw new Error("word left in site HTML: " + h.match(/.{
 // 1 Nov (Catalin): remove the "Demo · example data" banner at the top of the page. The footer and meta description still say it.
 must('<div class="banner"><b>Demo · example data.</b> All machines, names and numbers on this page are examples.</div>\n', "");
 if (h.includes('class="banner"')) throw new Error("top banner still in site HTML");
-if (!h.includes("<span>Demo · example data</span>")) throw new Error("footer 'Demo · example data' missing");
+// 20 Nov (sam-eee): the footer no longer says "Demo · example data". Example pictures keep their own "Example data" labels.
+must("\n  <span>Demo · example data</span>", "");
+// 20 Nov (sam-eee): position PanelPal as an AI analytics company (no downtime, no engineer), not a camera company with a dashboard.
+// The AI and its insights lead; the cameras are how it reads the machines. "No downtime" means no machine downtime to set up.
+must("<title>PanelPal · the everything sensor (demo)</title>", "<title>PanelPal · AI analytics for any machine, no downtime, no engineer (demo)</title>");
+must(`<meta name="description" content="Point a small camera at any machine screen or gauge. PanelPal's AI builds a live dashboard for your site. Demo with example data.">`,
+  `<meta name="description" content="AI analytics for any machine, gauge or data point. PanelPal's AI builds your dashboard and watches every machine, with no wiring, no downtime and no engineer. Demo with example data.">`);
+must('<p class="eyebrow">The everything sensor</p>', '<p class="eyebrow">AI analytics for any machine, gauge or data point</p>');
+must("<h1>Your machines already show their numbers. <em>PanelPal reads them.</em></h1>", "<h1>AI analytics for every machine. <em>No downtime, no engineer.</em></h1>");
+must('<p class="lead">Point a small camera at any screen or gauge. Our AI builds a live dashboard for your site. No wiring and no engineer.</p>',
+  `<p class="lead">PanelPal's AI learns your site, builds your dashboard and watches every machine for drift, unlogged stops and alarms. It reads the screens your machines already have, so nothing is wired in and nothing stops.</p>`);
+must('<a href="#how">How it works</a>', '<a href="#how">How it works</a><a href="#insights">AI insights</a>');
+must('<a href="#camera">The camera</a>', "");
+must('<h2 class="h2">The AI does the setup. Cameras feed the dashboard.</h2>', '<h2 class="h2">The AI does the setup and the analysis. You get the answers.</h2>');
+must("<h3>Feed it with cameras</h3><p>Put a small camera in front of each screen or gauge. It reads the values every few seconds.</p>",
+  "<h3>Connect your screens</h3><p>A small reader sits in front of each screen or gauge. No wiring, and the machine keeps running.</p>");
+must(`    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, every few seconds</span></div>\n  </div>`,
+  `    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, every few seconds</span></div>
+    <div class="lbl">Insights: the AI watches every machine</div>
+    <div class="node"><b>Site history</b><span>30 or more days for each machine, by program and shift</span></div>
+    <div class="node hi"><b>AI review</b><span>drift, stops that nobody logged, idle time, repeat alarms</span></div>
+    <div class="node end"><b>Suggestion card</b><span>the issue, its likely cause and one action</span></div>
+  </div>`);
+must('<p class="eyebrow">AI suggestions</p>', '<p class="eyebrow">AI insights</p>');
+must('<p class="eyebrow">Camera hardware</p><h2 class="h2">It sits in front of the display. It never touches the machine.</h2>',
+  '<p class="eyebrow">Hardware</p><h2 class="h2">A small reader in front of the display. It never touches the machine.</h2>');
+must("<span>One camera on one screen. See your first live numbers in an afternoon.</span>", "<span>One camera on one screen. See your first live numbers and AI insights in an afternoon.</span>");
+must("<b>Nothing to wire</b><span>The camera does not connect to the machine. Remove it and nothing changes.</span>",
+  "<b>No downtime</b><span>The machine keeps running while you set up. Nothing is wired in, and removing it changes nothing.</span>");
+must('<h2 class="h2">What the camera sees, and what we keep.</h2>', '<h2 class="h2">What we read, and what we keep.</h2>');
+must('<h2 class="h2">See PanelPal on your own screens.</h2>', '<h2 class="h2">Contact us</h2>');
+// 20 Nov (sam-eee): the entry plan is "Basic", with no mention of it being free.
+must("<h3>Free</h3>", "<h3>Basic</h3>");
+must("<p>The AI setup and the first dashboard are free. Plans can change.</p>", "<p>Every plan includes the AI setup and the first dashboard. Plans can change.</p>");
+// 20 Nov (sam-eee): the cameras read several times a second (was "every 2 seconds" / "every few seconds").
+must("<b>The camera reads every 2 seconds</b>", "<b>The camera reads several times a second</b>");
+must("<span>reads only the mapped values, every few seconds</span>", "<span>reads only the mapped values, several times a second</span>");
+must("<span>values the cameras read every few seconds, including", "<span>values the cameras read several times a second, including");
+if (/\bfree\b|every (few|2) seconds/i.test(h.replace(/<[^>]*>/g, ""))) throw new Error("'free' or the old reading rate left in site HTML");
+// 20 Nov (sam-eee): the closing section is a plain "Contact us": heading and form only. No intro line, no buttons or "Try the demo" link above the form.
+{ const a = h.indexOf('<h2 class="h2">Contact us</h2>'), b = h.indexOf('</div></div>', a);
+  if (a < 0 || b < 0 || !h.slice(a, b).includes('class="ctas"')) throw new Error("join: intro and links above the form not found");
+  h = h.slice(0, a) + '<h2 class="h2">Contact us</h2>' + h.slice(b + '</div>'.length); }
+// Section order: How it works, AI insights, Your data, What it reads, Camera view, Hardware, then the rest.
+const cut = (id) => { const a = h.indexOf(`<section id="${id}">`), b = h.indexOf("</section>", a) + "</section>\n\n".length;
+  if (a < 0 || h.slice(b - 12, b) !== "</section>\n\n") throw new Error(`section order: cannot cut #${id}`); const sec = h.slice(a, b); h = h.slice(0, a) + h.slice(b); return sec; };
+{ const ins = cut("insights"); must('<section id="data">', ins + '<section id="data">');
+  const cam = cut("camera"); must('<section id="hardware">', cam + '<section id="hardware">'); }
 writeFileSync(`${SITE}/index.html`, h);
 // Copy only the img/ files that the final HTML references. Unused design images are not published.
 const used = [...new Set([...h.matchAll(/(?:src|href)="(img\/[^"]+)"/g)].map((m) => m[1]))];

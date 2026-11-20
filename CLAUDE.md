@@ -42,7 +42,7 @@ cd source/site && node ../tools/build-site.mjs   # put the local preview back (T
 - Each patch has a dated comment recording who approved it. Keep that convention.
 - Guards fail the build if banned text comes back: "waitlist", "Planned", "concept", chip names (`esp32`/`xiao`), or a missing noindex or banner.
 - Only images that the final HTML references are copied into `site/public/img/`, from `source/assets/img/` first and then `design/src/img/`. Unused images or brand files fail the build.
-- Extra sections are kept in their own modules and injected by a `must` patch. For example, `tools/reads-gallery.mjs` holds the inline-SVG reader illustrations in "What it can read", and `tools/data-section.mjs` holds the on-prem / cloud section ("Your data, your choice") and the hero line that links to it. `tools/security-section.mjs` lists security standards with an honest status for each: PanelPal holds no certificate yet, and the build fails on a "certified" claim.
+- Extra sections are kept in their own modules and injected by a `must` patch. For example, `tools/reads-gallery.mjs` holds the inline-SVG reader illustrations in "What it can read", and `tools/data-section.mjs` holds the on-prem / cloud section ("Your data, your choice") and the hero line that links to it. PanelPal holds no certificate yet, so the build fails on a "certified" claim.
 
 `source/site/index.html` and `site/public/` are generated. Do not hand-edit them.
 
@@ -57,4 +57,4 @@ React 18 + TypeScript + Vite + Tailwind v4, routed with react-router (`/step/:n/
 - `source/design/README.md` has the copy rules: plain UK English, ASD-STE100 style for technical copy, no invented stats or testimonials, every figure labelled example data, generic machine names only, no hosting or location claims.
 
 ### Publishing invariants (checked by `build-combined.sh`)
-Both pages carry `<meta name="robots" content="noindex, nofollow">`. `robots.txt` disallows all. The site links "Try the demo" to `./demo/`. Forms make no network calls: `#join` opens a `mailto:` to contact@panelpal.co.uk.
+Both pages carry `<meta name="robots" content="noindex, nofollow">`. `robots.txt` disallows all. The site links "Try the demo" to `./demo/`. The `#join` form sends through Web3Forms (public access key in `tools/build-site.mjs`), which emails each request to contact@panelpal.co.uk. Other forms make no network calls.
