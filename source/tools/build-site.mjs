@@ -102,7 +102,7 @@ must(`      <button class="btn primary" type="submit">Join the waitlist</button>
 f.addEventListener("submit",function(e){e.preventDefault();b.disabled=true;s.className="wl-status";s.textContent="Sending…";
 fetch(f.action,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(f)))})
 .then(function(r){return r.json().then(function(j){if(!r.ok||!j.success)throw 0})})
-.then(function(){f.reset();s.className="wl-status ok";s.textContent="Thank you. We will reply by email soon."})
+.then(function(){f.reset();s.className="wl-status ok";s.textContent="Thank you, our team will be in touch soon."})
 .catch(function(){s.className="wl-status err";s.innerHTML='That did not send. Please try again, or email <a href="mailto:contact@panelpal.co.uk">contact@panelpal.co.uk</a>.'})
 .finally(function(){b.disabled=false})})})()</script>`);
 h = h.replace("</head>", "<style>form.wl textarea{border:1px solid var(--color-border-strong);border-radius:var(--radius-control);padding:10px 12px;font:inherit;background:#fff;width:100%;margin-top:6px;resize:vertical}.wl-trap{display:none}.wl-mail{margin:6px 0 0;padding-top:14px;border-top:1px solid var(--color-border);font-size:var(--type-base)}.wl-mail a{font-weight:600;color:var(--color-accent-strong)}.wl-status{margin:0;font-size:var(--type-sm);min-height:0}.wl-status:empty{display:none}.wl-status.ok{color:var(--color-running)}.wl-status.err{color:#b42d2d}</style>\n</head>");
@@ -136,7 +136,7 @@ must('\n    <div class="where">', HERO_LINE_HTML + '\n    <div class="where">');
 must('\n    <div class="where"><span>Machine shops</span><span>Labs</span><span>Kitchens</span><span>Growth rooms</span><span>Plant rooms</span><span>Any site with a screen or gauge</span></div>', '');
 must('<section id="camera">', DATA_SECTION_HTML + '<section id="camera">');
 must('<div class="card"><h3>Where your data is stored</h3><p>We will confirm this before launch. Ask us about it in your demo.</p></div>',
-  '<div class="card"><h3>You choose where your data is stored</h3><p>Privately in our cloud. Or, if it must stay on site, on a PanelPal computer in your building. <a href="#data">Compare the two</a>.</p></div>');
+  '<div class="card"><h3>You choose where it is stored</h3><p>Our cloud, or a PanelPal computer on site. <a href="#data">Compare</a></p></div>');
 h = h.replace("</head>", `<style>${DATA_SECTION_CSS}</style>\n</head>`);
 // 20 Nov (sam-eee): no serif italics anywhere. Accent phrases in serif headings stay coloured but upright.
 h = h.replace("</head>", "<style>.hero h1 em,.dp-quote .q em{font-style:normal}</style>\n</head>");
@@ -159,44 +159,44 @@ if (/concept/i.test(h)) throw new Error("word left in site HTML: " + h.match(/.{
 // 1 Nov (Catalin): remove the "Demo · example data" banner at the top of the page. The footer and meta description still say it.
 must('<div class="banner"><b>Demo · example data.</b> All machines, names and numbers on this page are examples.</div>\n', "");
 if (h.includes('class="banner"')) throw new Error("top banner still in site HTML");
-// 20 Nov (sam-eee): the footer no longer says "Demo · example data". Example pictures keep their own "Example data" labels.
+// 20 Nov (sam-eee): the footer no longer says "Demo · example data".
 must("\n  <span>Demo · example data</span>", "");
 // 20 Nov (sam-eee): position PanelPal as an AI analytics company (no downtime, no engineer), not a camera company with a dashboard.
 // The AI and its insights lead; the cameras are how it reads the machines. "No downtime" means no machine downtime to set up.
 must("<title>PanelPal · the everything sensor (demo)</title>", "<title>PanelPal · AI analytics for any machine, no downtime, no engineer (demo)</title>");
 must(`<meta name="description" content="Point a small camera at any machine screen or gauge. PanelPal's AI builds a live dashboard for your site. Demo with example data.">`,
   `<meta name="description" content="AI analytics for any machine, gauge or data point. PanelPal's AI builds your dashboard and watches every machine, with no wiring, no downtime and no engineer. Demo with example data.">`);
-must('<p class="eyebrow">The everything sensor</p>', '<p class="eyebrow">AI analytics for any machine, gauge or data point</p>');
+must('<p class="eyebrow">The everything sensor</p>', '<p class="eyebrow">Any machine, gauge or data point</p>');
 must("<h1>Your machines already show their numbers. <em>PanelPal reads them.</em></h1>", "<h1>AI analytics for every machine. <em>No downtime, no engineer.</em></h1>");
 must('<p class="lead">Point a small camera at any screen or gauge. Our AI builds a live dashboard for your site. No wiring and no engineer.</p>',
-  `<p class="lead">PanelPal's AI learns your site, builds your dashboard and watches every machine for drift, unlogged stops and alarms. It reads the screens your machines already have, so nothing is wired in and nothing stops.</p>`);
+  `<p class="lead">Our AI builds your dashboard and watches every machine for drift, stops and alarms. It reads the screens you already have.</p>`);
 must('<a href="#how">How it works</a>', '<a href="#how">How it works</a><a href="#insights">AI insights</a>');
 must('<a href="#camera">The camera</a>', "");
-must('<h2 class="h2">The AI does the setup. Cameras feed the dashboard.</h2>', '<h2 class="h2">The AI does the setup and the analysis. You get the answers.</h2>');
+must('<h2 class="h2">The AI does the setup. Cameras feed the dashboard.</h2>', '<h2 class="h2">The AI does the setup. You get the answers.</h2>');
 must("<h3>Feed it with cameras</h3><p>Put a small camera in front of each screen or gauge. It reads the values every few seconds.</p>",
-  "<h3>Connect your screens</h3><p>A small reader sits in front of each screen or gauge. No wiring, and the machine keeps running.</p>");
+  "<h3>Connect our cameras</h3><p>One small camera in front of each screen. No wiring, no downtime.</p>");
 must(`    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, every few seconds</span></div>\n  </div>`,
   `    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, every few seconds</span></div>
-    <div class="lbl">Insights: the AI watches every machine</div>
-    <div class="node"><b>Site history</b><span>30 or more days for each machine, by program and shift</span></div>
-    <div class="node hi"><b>AI review</b><span>drift, stops that nobody logged, idle time, repeat alarms</span></div>
-    <div class="node end"><b>Suggestion card</b><span>the issue, its likely cause and one action</span></div>
+    <div class="lbl">Insights</div>
+    <div class="node"><b>Site history</b><span>30+ days per machine</span></div>
+    <div class="node hi"><b>AI review</b><span>drift, unlogged stops, idle time, alarms</span></div>
+    <div class="node end"><b>Suggestion card</b><span>issue, cause, one action</span></div>
   </div>`);
 must('<p class="eyebrow">AI suggestions</p>', '<p class="eyebrow">AI insights</p>');
 must('<p class="eyebrow">Camera hardware</p><h2 class="h2">It sits in front of the display. It never touches the machine.</h2>',
-  '<p class="eyebrow">Hardware</p><h2 class="h2">A small reader in front of the display. It never touches the machine.</h2>');
-must("<span>One camera on one screen. See your first live numbers in an afternoon.</span>", "<span>One camera on one screen. See your first live numbers and AI insights in an afternoon.</span>");
+  '<p class="eyebrow">Hardware</p><h2 class="h2">Sits in front of the display. Never touches the machine.</h2>');
+must("<span>One camera on one screen. See your first live numbers in an afternoon.</span>", "<span>Live numbers and AI insights in an afternoon.</span>");
 must("<b>Nothing to wire</b><span>The camera does not connect to the machine. Remove it and nothing changes.</span>",
-  "<b>No downtime</b><span>The machine keeps running while you set up. Nothing is wired in, and removing it changes nothing.</span>");
-must('<h2 class="h2">What the camera sees, and what we keep.</h2>', '<h2 class="h2">What we read, and what we keep.</h2>');
+  "<b>No downtime</b><span>Nothing wired in. Machines keep running.</span>");
+must('<h2 class="h2">What the camera sees, and what we keep.</h2>', '<h2 class="h2">Your data is yours. And it stays private.</h2>');
 must('<h2 class="h2">See PanelPal on your own screens.</h2>', '<h2 class="h2">Contact us</h2>');
 // 20 Nov (sam-eee): the entry plan is "Basic", with no mention of it being free.
 must("<h3>Free</h3>", "<h3>Basic</h3>");
-must("<p>The AI setup and the first dashboard are free. Plans can change.</p>", "<p>Every plan includes the AI setup and the first dashboard. Plans can change.</p>");
+must("<p>The AI setup and the first dashboard are free. Plans can change.</p>", "<p>AI setup on every plan. Plans can change.</p>");
 // 20 Nov (sam-eee): the cameras read several times a second (was "every 2 seconds" / "every few seconds").
-must("<b>The camera reads every 2 seconds</b>", "<b>The camera reads several times a second</b>");
-must("<span>reads only the mapped values, every few seconds</span>", "<span>reads only the mapped values, several times a second</span>");
-must("<span>values the cameras read every few seconds, including", "<span>values the cameras read several times a second, including");
+must("<b>The camera reads every 2 seconds</b>", "<b>Reads several times a second</b>");
+must("<span>reads only the mapped values, every few seconds</span>", "<span>several times a second</span>");
+must("<span>values the cameras read every few seconds, including", "<span>values and alarms, several times a second");
 if (/\bfree\b|every (few|2) seconds/i.test(h.replace(/<[^>]*>/g, ""))) throw new Error("'free' or the old reading rate left in site HTML");
 // 20 Nov (sam-eee): the closing section is a plain "Contact us": heading and form only. No intro line, no buttons or "Try the demo" link above the form.
 { const a = h.indexOf('<h2 class="h2">Contact us</h2>'), b = h.indexOf('</div></div>', a);
@@ -207,6 +207,57 @@ const cut = (id) => { const a = h.indexOf(`<section id="${id}">`), b = h.indexOf
   if (a < 0 || h.slice(b - 12, b) !== "</section>\n\n") throw new Error(`section order: cannot cut #${id}`); const sec = h.slice(a, b); h = h.slice(0, a) + h.slice(b); return sec; };
 { const ins = cut("insights"); must('<section id="data">', ins + '<section id="data">');
   const cam = cut("camera"); must('<section id="hardware">', cam + '<section id="hardware">'); }
+// 20 Nov (sam-eee): the privacy section is about ownership and privacy: the data is theirs and it is kept private.
+{ const a = h.indexOf('<div class="priv">'), b = h.indexOf("</div>\n</div></section>", a);
+  if (a < 0 || b < 0 || !h.slice(a, b).includes("The camera sees only the screen")) throw new Error("privacy: card grid not found");
+  h = h.slice(0, a) + `<div class="priv">
+    <div class="card"><h3>Yours, always</h3><p>You own every reading. Export or delete it any time.</p></div>
+    <div class="card"><h3>Private to your company</h3><p>Encrypted, and only the people you invite can see it.</p></div>
+    <div class="card"><h3>Never sold or shared</h3><p>We never sell your data or pass it to anyone else.</p></div>
+    <div class="card"><h3>You choose where it lives</h3><p>Our cloud, or our AI box on your site. <a href="#data">Compare</a></p></div>
+  ` + h.slice(b); }
+// 20 Nov (sam-eee): shorter copy everywhere, and no captions or "example data" labels under images.
+for (const [from, to] of [
+  ["<p>The AI does the work of a controls engineer: it finds what is on your floor, what to measure and how to show it.</p>", "<p>It does the work of a controls engineer.</p>"],
+  ["<p>Type a sentence. Add a floor plan or a few photos if you like. The AI finds and names your machines.</p>", "<p>Type a sentence, or add a floor plan or photos. The AI finds your machines.</p>"],
+  ["<p>The AI suggests what to track on each machine and builds the dashboard. Change it by asking in plain English.</p>", "<p>The AI picks what to track and builds it. Change it in plain English.</p>"],
+  ["<div class=\"lbl\">Set up: you describe the site, the AI builds the rest</div>", "<div class=\"lbl\">Set up</div>"],
+  ["<b>Describe it</b><span>words, a floor plan or photos of the floor</span>", "<b>Describe it</b><span>words, a floor plan or photos</span>"],
+  ["<b>AI site model</b><span>finds each machine, picks the values to track, plans where cameras go</span>", "<b>AI site model</b><span>finds machines, picks values, plans cameras</span>"],
+  ["<b>Your dashboard</b><span>layout and data model, edit it in plain English, alerts and reports</span>", "<b>Your dashboard</b><span>edit in plain English, alerts and reports</span>"],
+  ["<div class=\"lbl\">Feed: cameras read each machine's own screen</div>", "<div class=\"lbl\">Read</div>"],
+  ["<b>PanelPal camera</b><span>points at a screen or gauge, no wiring</span>", "<b>PanelPal camera</b><span>points at a screen or gauge</span>"],
+  ["<b>Vision model maps the screen</b><span>one time per machine, finds and labels each value</span>", "<b>Vision model maps it</b><span>once per machine</span>"],
+  ["<h2 class=\"h2\">An assistant that watches every screen for you.</h2>", "<h2 class=\"h2\">An assistant that watches every screen.</h2>"],
+  ["<p class=\"lead\" style=\"margin-top:14px\">Each card names the machine, the likely cause and one action. It can catch a warning that only ever showed on the machine's own screen.</p>", "<p class=\"lead\" style=\"margin-top:14px\">Each card names the machine, the likely cause and one action.</p>"],
+  ["<b>Site history</b><span>30 or more days for each machine, by program and shift</span>", "<b>Site history</b><span>30+ days per machine</span>"],
+  ["<b>AI review</b><span>compares now with normal: drift, stops that nobody logged, idle time, repeat alarms</span>", "<b>AI review</b><span>compares now with normal</span>"],
+  ["<div class=\"node\"><b>Suggestion card</b><span>the issue, its likely cause and one action</span>", "<div class=\"node\"><b>Suggestion card</b><span>issue, cause, one action</span>"],
+  ["<p>Each value gets the reader that suits it. The vision model marks the area one time, and you confirm it.</p>", "<p>Each value gets the right reader. You confirm it once.</p>"],
+  ["Growth chamber and incubator controllers, balances, pH and EC meters, temperature controllers, motor drive displays, old PCs that run instrument software", "Controllers, balances, pH meters, drive displays"],
+  ["Hydraulic, pneumatic and vacuum gauges, CO₂ cylinder regulators, autoclave pressure, liquid nitrogen dewar levels, bimetal thermometers", "Pressure and vacuum gauges, regulators, thermometers"],
+  ["Water, gas and electricity meters, hour meters, mechanical cycle counters", "Utility meters, hour meters, cycle counters"],
+  ["Stack lights and panel LEDs, chamber lights on or off, pH colour change, leaf greenness", "Stack lights, panel LEDs, colour changes"],
+  ["Sight glasses, hydroponic tanks, carboys, coolant and waste containers", "Sight glasses, tanks, coolant containers"],
+  ["A tray on a shelf, a door or guard open, a part in a fixture", "A tray on a shelf, a guard open, a part in place"],
+  ["<b>The AI marks each value one time</b><span>It puts a box around each value and gives it a name. You confirm the boxes.</span>", "<b>The AI marks each value once</b><span>You confirm the boxes.</span>"],
+  ["<span>It reads only the boxed values. It does this on the device.</span>", "<span>Only the boxed values, on the device.</span>"],
+  ["<b>Each reading has a confidence score</b><span>A low score tells you to check the reading. If the camera loses the screen, the app shows \"No signal\". It does not guess.</span>", "<b>Every reading has a confidence score</b><span>Low scores are flagged. No screen, no guess.</span>"],
+  ["<span>You can compare any number with the image it came from.</span>", "<span>Check any number against its image.</span>"],
+  ["<p class=\"lead\" style=\"margin-top:14px\">A lab that wants one centrifuge on record can skip the layout. Describe it, point a camera at its display, and the app logs every run. Add more devices, or a whole site, later.</p>", "<p class=\"lead\" style=\"margin-top:14px\">Point one camera at one display and log every run. Add more later.</p>"],
+  ["<h2 class=\"h2\">Every plan gets the layout. Higher plans draw it in more detail.</h2>", "<h2 class=\"h2\">Every plan gets the layout. Higher plans add detail.</h2>"],
+  ["<b>Recalibration is included</b><span>If a screen layout changes, the camera maps it again, on every plan.</span>", "<b>Recalibration included</b><span>If a screen changes, it maps it again.</span>"],
+  ["\n    <span class=\"pill ex tag\">Example data</span>", ""],
+  ["\n    <p class=\"cap\">Example data</p>", ""],
+  ["<p class=\"cap\">What the camera sees on a growth room controller · rendered mock-up · example data</p>", ""],
+  ["<p>These are rendered mock-ups, not photos.</p>", ""],
+  ["<b>On a lab bench</b>About 22 cm from a 7-inch controller, tilted to frame the whole screen.", "<b>On a lab bench</b>"],
+  ["<b>At a growth chamber</b>A magnetic gooseneck holds the camera about 19 cm in front of the controller.", "<b>At a growth chamber</b>"],
+  ["<b>Current case</b>About 25 × 30 × 19 mm, with a status light and a magnetic stand.", "<b>The reader</b>"],
+  ["\n  <p class=\"note\">Colour, level, presence, motion, count and area are simple filters on the same frames. They are indicators, not calibrated measurements, and the app labels them that way.</p>", ""],
+  ["<div class=\"price\">Up to 3 machines · example plan</div>", "<div class=\"price\">Up to 3 machines</div>"],
+  ]) must(from, to);
+if (/example (data|plan)|mock-up/i.test(h.replace(/<[^>]*>/g, ""))) throw new Error("caption or example-data label left in site HTML: " + h.replace(/<[^>]*>/g, "").match(/.{0,40}(example (data|plan)|mock-up).{0,40}/i)[0]);
 writeFileSync(`${SITE}/index.html`, h);
 // Copy only the img/ files that the final HTML references. Unused design images are not published.
 const used = [...new Set([...h.matchAll(/(?:src|href)="(img\/[^"]+)"/g)].map((m) => m[1]))];
