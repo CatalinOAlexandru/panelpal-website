@@ -72,43 +72,41 @@ const ICON_BOX = `<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="13"
 const ICON_CLOUD = `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M11 30 a7 7 0 0 1 1 -14 a10 10 0 0 1 19 -2 a7 7 0 0 1 -1 16 z" fill="#e5effa" stroke="#2874d2" stroke-width="2"/></svg>`;
 
 export const DATA_SECTION_HTML = `<section id="data"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">Your data, your choice</p><h2 class="h2">We run it in our cloud. Or you run it in your building.</h2><p>Every reading belongs to you, wherever it lives. Most sites start in our cloud, where your data is private to your company. If your rules say it must stay on site, add on-prem.</p></div>
+  <div class="sec-head"><p class="eyebrow">Your data, your choice</p><h2 class="h2">Our cloud, or your building.</h2><p>Your data is yours either way. Most sites start in our cloud. Need it on site? Add on-prem.</p></div>
   <div class="dp">
     <div class="card dp-opt on">
-      <div class="dp-h">${ICON_CLOUD}<div><span class="dp-tag">Recommended</span><h3>Cloud</h3><span class="dp-sub">Private to your company. We run it for you.</span></div></div>
-      <ul><li>Your data is encrypted, and you control who it is shared with</li><li>Nothing to install or look after</li><li>See your sites from anywhere</li><li>Updates are done for you</li><li>The quickest way to start</li></ul>
+      <div class="dp-h">${ICON_CLOUD}<div><span class="dp-tag">Recommended</span><h3>Cloud</h3><span class="dp-sub">Private. We run it for you.</span></div></div>
+      <ul><li>Encrypted, and you control who sees it</li><li>Nothing to install</li><li>Access from anywhere</li><li>Updates done for you</li></ul>
     </div>
     <div class="card dp-opt">
-      <div class="dp-h">${ICON_BOX}<div><span class="dp-tag soft">Extra option</span><h3>On-prem</h3><span class="dp-sub">Your own computer, in your building</span></div></div>
-      <ul><li>A small PanelPal computer runs on your site</li><li>The cameras send readings only to it, over your own network</li><li>Readings, history and dashboards stay in your building</li><li>You decide if anything goes outside</li></ul>
+      <div class="dp-h">${ICON_BOX}<div><span class="dp-tag soft">Extra option</span><h3>On-prem</h3><span class="dp-sub">In your building</span></div></div>
+      <ul><li>A small PanelPal computer on site</li><li>Readings stay on your network</li><li>You decide what goes outside</li></ul>
     </div>
   </div>
   <h3 class="dp-more">How we look after your data</h3>
   <ul class="dp-care">
-    <li><b>Encrypted</b><span>Readings are encrypted on the way to us and in storage.</span></li>
-    <li><b>Only your team</b><span>Each person sees only the sites and machines that you give them.</span></li>
-    <li><b>Never sold</b><span>We never sell your data or share it with anyone else.</span></li>
-    <li><b>Yours to take</b><span>Export your readings at any time, or ask us to delete them.</span></li>
-    <li><b>Every change logged</b><span>Every sign-in, setting change and export is recorded.</span></li>
+    <li><b>Encrypted</b><span>In transit and in storage.</span></li>
+    <li><b>Only your team</b><span>People see only what you give them.</span></li>
+    <li><b>Never sold</b><span>Never sold or shared.</span></li>
+    <li><b>Yours to take</b><span>Export or delete it any time.</span></li>
+    <li><b>Every change logged</b><span>Sign-ins, settings and exports.</span></li>
   </ul>
   <h3 class="dp-more">Need your data to stay on site?</h3>
   <div class="dp-top">
-    <figure class="dp-fig">${ART.replace(/\n\s*/g, "")}<figcaption>On-prem: the cameras talk only to a small PanelPal computer on your site.</figcaption></figure>
+    <figure class="dp-fig">${ART.replace(/\n\s*/g, "")}</figure>
     <blockquote class="dp-quote">
       ${lockIcon("dp-lock")}
       <p class="q">Your data is yours. <em>Keep it in your building.</em></p>
-      <p>Some sites have rules that production data must not leave the building. On-prem is for them: readings stay on your own network, and nothing goes outside unless you choose.</p>
+      <p>For sites whose data must not leave the building.</p>
     </blockquote>
   </div>
-  <p class="note">Tell us which one you need when you book your demo. The demo on this site shows both options.</p>
 </div></section>
 
 `;
 
 export const DATA_SECTION_CSS = `.dp-top{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:stretch}
-.dp-fig{margin:0;background:var(--color-surface-2);border-radius:var(--radius-card);padding:22px 22px 16px;display:flex;flex-direction:column;justify-content:center}
+.dp-fig{margin:0;background:var(--color-surface-2);border-radius:var(--radius-card);padding:22px;display:flex;flex-direction:column;justify-content:center}
 .dp-art{width:100%;height:auto;display:block}
-.dp-fig figcaption{font-size:var(--type-sm);color:var(--color-muted);margin-top:10px;text-align:center}
 .dp-flow{animation:dp-flow 1.2s linear infinite}
 @keyframes dp-flow{to{stroke-dashoffset:-22}}
 @media (prefers-reduced-motion:reduce){.dp-flow{animation:none}}
@@ -138,7 +136,7 @@ export const DATA_SECTION_CSS = `.dp-top{display:grid;grid-template-columns:minm
 .own{display:flex;gap:10px;align-items:center;margin:22px 0 0;font-size:var(--type-sm);color:var(--color-muted)}
 .own svg{width:28px;height:28px;flex:none}
 .own b{color:var(--color-text)}
-@media (max-width:760px){.dp-top,.dp,.dp-care{grid-template-columns:1fr}.dp-fig{padding:14px 10px 12px}.dp-quote{padding:28px 24px}.dp-quote .q{font-size:28px}}`;
+@media (max-width:760px){.dp-top,.dp,.dp-care{grid-template-columns:1fr}.dp-fig{padding:14px 10px}.dp-quote{padding:28px 24px}.dp-quote .q{font-size:28px}}`;
 
 // Hero line under the buttons: links to the section.
-export const HERO_LINE_HTML = `\n    <p class="own">${lockIcon()}<span><b>Your data stays yours.</b> We run it in our cloud, or on your own site. <a href="#data">See how</a></span></p>`;
+export const HERO_LINE_HTML = `\n    <p class="own">${lockIcon()}<span><b>Your data stays yours.</b> In our cloud or on your site. <a href="#data">See how</a></span></p>`;

@@ -24,9 +24,8 @@
 @media (prefers-reduced-motion:reduce){.rg-spin{animation:none}}
 @media (max-width:760px){.rg{grid-template-columns:1fr 1fr;gap:14px}.rg-im{height:112px}}</style>
 <style>.dp-top{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:stretch}
-.dp-fig{margin:0;background:var(--color-surface-2);border-radius:var(--radius-card);padding:22px 22px 16px;display:flex;flex-direction:column;justify-content:center}
+.dp-fig{margin:0;background:var(--color-surface-2);border-radius:var(--radius-card);padding:22px;display:flex;flex-direction:column;justify-content:center}
 .dp-art{width:100%;height:auto;display:block}
-.dp-fig figcaption{font-size:var(--type-sm);color:var(--color-muted);margin-top:10px;text-align:center}
 .dp-flow{animation:dp-flow 1.2s linear infinite}
 @keyframes dp-flow{to{stroke-dashoffset:-22}}
 @media (prefers-reduced-motion:reduce){.dp-flow{animation:none}}
@@ -56,7 +55,7 @@
 .own{display:flex;gap:10px;align-items:center;margin:22px 0 0;font-size:var(--type-sm);color:var(--color-muted)}
 .own svg{width:28px;height:28px;flex:none}
 .own b{color:var(--color-text)}
-@media (max-width:760px){.dp-top,.dp,.dp-care{grid-template-columns:1fr}.dp-fig{padding:14px 10px 12px}.dp-quote{padding:28px 24px}.dp-quote .q{font-size:28px}}</style>
+@media (max-width:760px){.dp-top,.dp,.dp-care{grid-template-columns:1fr}.dp-fig{padding:14px 10px}.dp-quote{padding:28px 24px}.dp-quote .q{font-size:28px}}</style>
 <style>.hero h1 em,.dp-quote .q em{font-style:normal}</style>
 </head>
 <body>
@@ -71,9 +70,9 @@
 <main id="top">
 <section class="first"><div class="wrap hero">
   <div>
-    <p class="eyebrow">AI analytics for any machine, gauge or data point</p>
+    <p class="eyebrow">Any machine, gauge or data point</p>
     <h1>AI analytics for every machine. <em>No downtime, no engineer.</em></h1>
-    <p class="lead">PanelPal's AI learns your site, builds your dashboard and watches every machine for drift, unlogged stops and alarms. It reads the screens your machines already have, so nothing is wired in and nothing stops.</p>
+    <p class="lead">Our AI builds your dashboard and watches every machine for drift, stops and alarms. It reads the screens you already have.</p>
     <div class="ctas">
       <a class="btn primary" href="#join">Book a demo</a>
       <a class="link" href="http://localhost:5190/">Try the demo →</a>
@@ -81,35 +80,34 @@
     <p class="own"><svg viewBox="-16 -16 32 32" aria-hidden="true"><g transform="translate(0 0) scale(1)">
   <circle r="15" fill="#2874d2"/><circle r="15" fill="none" stroke="#fff" stroke-width="2.5"/>
   <path d="M-5 -1 v-3.5 a5 5 0 0 1 10 0 v3.5" fill="none" stroke="#fff" stroke-width="2.2"/>
-  <rect x="-7.5" y="-1.5" width="15" height="11" rx="2" fill="#fff"/><circle cy="3.5" r="1.8" fill="#2874d2"/></g></svg><span><b>Your data stays yours.</b> We run it in our cloud, or on your own site. <a href="#data">See how</a></span></p>
+  <rect x="-7.5" y="-1.5" width="15" height="11" rx="2" fill="#fff"/><circle cy="3.5" r="1.8" fill="#2874d2"/></g></svg><span><b>Your data stays yours.</b> In our cloud or on your site. <a href="#data">See how</a></span></p>
   </div>
   <div class="hero-art">
     <img class="cam" src="img/cnc-hmi-camera-clean.png" alt="Camera view of a CNC mill operator screen. Spindle speed, spindle load, parts today and alarm are each boxed. Example data.">
     <img class="phone" src="img/s6-logging.png" alt="Phone screen: a machine logging live, with speed, load, parts and uptime.">
-    <span class="pill ex tag">Example data</span>
   </div>
 </div></section>
 
 <section id="how"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">How it works</p><h2 class="h2">The AI does the setup and the analysis. You get the answers.</h2><p>The AI does the work of a controls engineer: it finds what is on your floor, what to measure and how to show it.</p></div>
+  <div class="sec-head"><p class="eyebrow">How it works</p><h2 class="h2">The AI does the setup. You get the answers.</h2><p>It does the work of a controls engineer.</p></div>
   <div class="steps">
-    <div class="card step"><div class="n">1</div><h3>Describe your site</h3><p>Type a sentence. Add a floor plan or a few photos if you like. The AI finds and names your machines.</p><div class="shot"><img src="img/s1-describe.png" alt="Phone screen: Tell us about your site"></div></div>
-    <div class="card step"><div class="n">2</div><h3>Get a dashboard</h3><p>The AI suggests what to track on each machine and builds the dashboard. Change it by asking in plain English.</p><div class="shot"><img src="img/s2-generating.png" alt="Phone screen: Building your dashboard, 60% done"></div></div>
-    <div class="card step"><div class="n">3</div><h3>Connect your screens</h3><p>A small reader sits in front of each screen or gauge. No wiring, and the machine keeps running.</p><div class="shot"><img src="img/s5-identify.png" alt="Phone screen: identify the machine and choose values to log"></div></div>
+    <div class="card step"><div class="n">1</div><h3>Describe your site</h3><p>Type a sentence, or add a floor plan or photos. The AI finds your machines.</p><div class="shot"><img src="img/s1-describe.png" alt="Phone screen: Tell us about your site"></div></div>
+    <div class="card step"><div class="n">2</div><h3>Get a dashboard</h3><p>The AI picks what to track and builds it. Change it in plain English.</p><div class="shot"><img src="img/s2-generating.png" alt="Phone screen: Building your dashboard, 60% done"></div></div>
+    <div class="card step"><div class="n">3</div><h3>Connect your screens</h3><p>A small reader sits in front of each screen. No wiring, no downtime.</p><div class="shot"><img src="img/s5-identify.png" alt="Phone screen: identify the machine and choose values to log"></div></div>
   </div>
   <div class="card pipe" aria-label="Pipeline from site description to live dashboard">
-    <div class="lbl">Set up: you describe the site, the AI builds the rest</div>
-    <div class="node"><b>Describe it</b><span>words, a floor plan or photos of the floor</span></div>
-    <div class="node hi"><b>AI site model</b><span>finds each machine, picks the values to track, plans where cameras go</span></div>
-    <div class="node end"><b>Your dashboard</b><span>layout and data model, edit it in plain English, alerts and reports</span></div>
-    <div class="lbl">Feed: cameras read each machine's own screen</div>
-    <div class="node"><b>PanelPal camera</b><span>points at a screen or gauge, no wiring</span></div>
-    <div class="node"><b>Vision model maps the screen</b><span>one time per machine, finds and labels each value</span></div>
-    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, several times a second</span></div>
-    <div class="lbl">Insights: the AI watches every machine</div>
-    <div class="node"><b>Site history</b><span>30 or more days for each machine, by program and shift</span></div>
-    <div class="node hi"><b>AI review</b><span>drift, stops that nobody logged, idle time, repeat alarms</span></div>
-    <div class="node end"><b>Suggestion card</b><span>the issue, its likely cause and one action</span></div>
+    <div class="lbl">Set up</div>
+    <div class="node"><b>Describe it</b><span>words, a floor plan or photos</span></div>
+    <div class="node hi"><b>AI site model</b><span>finds machines, picks values, plans cameras</span></div>
+    <div class="node end"><b>Your dashboard</b><span>edit in plain English, alerts and reports</span></div>
+    <div class="lbl">Read</div>
+    <div class="node"><b>PanelPal camera</b><span>points at a screen or gauge</span></div>
+    <div class="node"><b>Vision model maps it</b><span>once per machine</span></div>
+    <div class="node end"><b>On-device reading</b><span>several times a second</span></div>
+    <div class="lbl">Insights</div>
+    <div class="node"><b>Site history</b><span>30+ days per machine</span></div>
+    <div class="node hi"><b>AI review</b><span>drift, unlogged stops, idle time, alarms</span></div>
+    <div class="node end"><b>Suggestion card</b><span>issue, cause, one action</span></div>
   </div>
 </div></section>
 
@@ -117,55 +115,53 @@
   <img class="phone" src="img/s7-insights.png" alt="Phone screen: Insights, with three suggestion cards">
   <div>
     <p class="eyebrow">AI insights</p>
-    <h2 class="h2">An assistant that watches every screen for you.</h2>
-    <p class="lead" style="margin-top:14px">Each card names the machine, the likely cause and one action. It can catch a warning that only ever showed on the machine's own screen.</p>
+    <h2 class="h2">An assistant that watches every screen.</h2>
+    <p class="lead" style="margin-top:14px">Each card names the machine, the likely cause and one action.</p>
     <div class="flow">
-      <div class="node"><b>Screen readings</b><span>values the cameras read several times a second, including alarm text and warnings on the screen</span></div>
-      <div class="node"><b>Site history</b><span>30 or more days for each machine, by program and shift</span></div>
-      <div class="node hi"><b>AI review</b><span>compares now with normal: drift, stops that nobody logged, idle time, repeat alarms</span></div>
-      <div class="node"><b>Suggestion card</b><span>the issue, its likely cause and one action</span></div>
+      <div class="node"><b>Screen readings</b><span>values and alarms, several times a second alarm text and warnings on the screen</span></div>
+      <div class="node"><b>Site history</b><span>30+ days per machine</span></div>
+      <div class="node hi"><b>AI review</b><span>compares now with normal</span></div>
+      <div class="node"><b>Suggestion card</b><span>issue, cause, one action</span></div>
     </div>
-    <p class="cap">Example data</p>
   </div>
 </div></section>
 
 <section id="data"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">Your data, your choice</p><h2 class="h2">We run it in our cloud. Or you run it in your building.</h2><p>Every reading belongs to you, wherever it lives. Most sites start in our cloud, where your data is private to your company. If your rules say it must stay on site, add on-prem.</p></div>
+  <div class="sec-head"><p class="eyebrow">Your data, your choice</p><h2 class="h2">Our cloud, or your building.</h2><p>Your data is yours either way. Most sites start in our cloud. Need it on site? Add on-prem.</p></div>
   <div class="dp">
     <div class="card dp-opt on">
-      <div class="dp-h"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M11 30 a7 7 0 0 1 1 -14 a10 10 0 0 1 19 -2 a7 7 0 0 1 -1 16 z" fill="#e5effa" stroke="#2874d2" stroke-width="2"/></svg><div><span class="dp-tag">Recommended</span><h3>Cloud</h3><span class="dp-sub">Private to your company. We run it for you.</span></div></div>
-      <ul><li>Your data is encrypted, and you control who it is shared with</li><li>Nothing to install or look after</li><li>See your sites from anywhere</li><li>Updates are done for you</li><li>The quickest way to start</li></ul>
+      <div class="dp-h"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M11 30 a7 7 0 0 1 1 -14 a10 10 0 0 1 19 -2 a7 7 0 0 1 -1 16 z" fill="#e5effa" stroke="#2874d2" stroke-width="2"/></svg><div><span class="dp-tag">Recommended</span><h3>Cloud</h3><span class="dp-sub">Private. We run it for you.</span></div></div>
+      <ul><li>Encrypted, and you control who sees it</li><li>Nothing to install</li><li>Access from anywhere</li><li>Updates done for you</li></ul>
     </div>
     <div class="card dp-opt">
-      <div class="dp-h"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="13" width="30" height="16" rx="4" fill="#1f2328"/><rect x="9" y="18" width="12" height="2" rx="1" fill="#8e8b8b"/><rect x="9" y="22" width="12" height="2" rx="1" fill="#8e8b8b"/><circle cx="30" cy="25" r="2" fill="#0ca30c"/></svg><div><span class="dp-tag soft">Extra option</span><h3>On-prem</h3><span class="dp-sub">Your own computer, in your building</span></div></div>
-      <ul><li>A small PanelPal computer runs on your site</li><li>The cameras send readings only to it, over your own network</li><li>Readings, history and dashboards stay in your building</li><li>You decide if anything goes outside</li></ul>
+      <div class="dp-h"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="13" width="30" height="16" rx="4" fill="#1f2328"/><rect x="9" y="18" width="12" height="2" rx="1" fill="#8e8b8b"/><rect x="9" y="22" width="12" height="2" rx="1" fill="#8e8b8b"/><circle cx="30" cy="25" r="2" fill="#0ca30c"/></svg><div><span class="dp-tag soft">Extra option</span><h3>On-prem</h3><span class="dp-sub">In your building</span></div></div>
+      <ul><li>A small PanelPal computer on site</li><li>Readings stay on your network</li><li>You decide what goes outside</li></ul>
     </div>
   </div>
   <h3 class="dp-more">How we look after your data</h3>
   <ul class="dp-care">
-    <li><b>Encrypted</b><span>Readings are encrypted on the way to us and in storage.</span></li>
-    <li><b>Only your team</b><span>Each person sees only the sites and machines that you give them.</span></li>
-    <li><b>Never sold</b><span>We never sell your data or share it with anyone else.</span></li>
-    <li><b>Yours to take</b><span>Export your readings at any time, or ask us to delete them.</span></li>
-    <li><b>Every change logged</b><span>Every sign-in, setting change and export is recorded.</span></li>
+    <li><b>Encrypted</b><span>In transit and in storage.</span></li>
+    <li><b>Only your team</b><span>People see only what you give them.</span></li>
+    <li><b>Never sold</b><span>Never sold or shared.</span></li>
+    <li><b>Yours to take</b><span>Export or delete it any time.</span></li>
+    <li><b>Every change logged</b><span>Sign-ins, settings and exports.</span></li>
   </ul>
   <h3 class="dp-more">Need your data to stay on site?</h3>
   <div class="dp-top">
-    <figure class="dp-fig"><svg class="dp-art" viewBox="0 0 600 340" role="img" aria-labelledby="dp-art-t"><title id="dp-art-t">On-prem: the cameras on three machines send their readings to a small PanelPal computer in your building. A screen in the office shows the dashboard. The link to the cloud is cut: nothing leaves your site.</title><defs><linearGradient id="dp-box" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3d40"/><stop offset="1" stop-color="#1f2328"/></linearGradient><pattern id="dp-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#ededec" stroke-width="1"/></pattern></defs><g font-family="Inter, system-ui, sans-serif"><!-- building --><rect x="14" y="34" width="440" height="292" rx="18" fill="url(#dp-grid)" stroke="#2874d2" stroke-width="2.5"/><rect x="14" y="34" width="440" height="292" rx="18" fill="#fff" opacity=".55"/><rect x="30" y="20" width="214" height="30" rx="15" fill="#2874d2"/><text x="137" y="40" font-size="13.5" font-weight="600" fill="#fff" text-anchor="middle">Your building · your network</text><!-- machines with cameras --><g><rect x="40" y="76" width="116" height="58" rx="8" fill="#fff" stroke="#a6a6a6" stroke-width="1.5"/><rect x="50" y="86" width="44" height="26" rx="3" fill="#1f2328"/><rect x="54" y="91" width="22" height="5" rx="1" fill="#6fd06f"/><rect x="54" y="100" width="32" height="5" rx="1" fill="#7fb3ee"/><text x="50" y="126" font-size="12" font-weight="600" fill="#161616">CNC mill 3</text><rect x="110" y="82" width="22" height="16" rx="4" fill="#fff" stroke="#5f5f5d" stroke-width="1.4"/><circle cx="121" cy="90" r="4.4" fill="#2874d2"/><circle cx="121" cy="90" r="1.6" fill="#fff"/></g><g><rect x="40" y="160" width="116" height="58" rx="8" fill="#fff" stroke="#a6a6a6" stroke-width="1.5"/><rect x="50" y="170" width="44" height="26" rx="3" fill="#1f2328"/><rect x="54" y="175" width="22" height="5" rx="1" fill="#6fd06f"/><rect x="54" y="184" width="32" height="5" rx="1" fill="#7fb3ee"/><text x="50" y="210" font-size="12" font-weight="600" fill="#161616">Press 2</text><rect x="110" y="166" width="22" height="16" rx="4" fill="#fff" stroke="#5f5f5d" stroke-width="1.4"/><circle cx="121" cy="174" r="4.4" fill="#2874d2"/><circle cx="121" cy="174" r="1.6" fill="#fff"/></g><g><rect x="40" y="244" width="116" height="58" rx="8" fill="#fff" stroke="#a6a6a6" stroke-width="1.5"/><rect x="50" y="254" width="44" height="26" rx="3" fill="#1f2328"/><rect x="54" y="259" width="22" height="5" rx="1" fill="#6fd06f"/><rect x="54" y="268" width="32" height="5" rx="1" fill="#7fb3ee"/><text x="50" y="294" font-size="12" font-weight="600" fill="#161616">Oven 1</text><rect x="110" y="250" width="22" height="16" rx="4" fill="#fff" stroke="#5f5f5d" stroke-width="1.4"/><circle cx="121" cy="258" r="4.4" fill="#2874d2"/><circle cx="121" cy="258" r="1.6" fill="#fff"/></g><!-- links: cameras to the box --><g fill="none" stroke="#2874d2" stroke-width="2.2" stroke-dasharray="5 6" class="dp-flow"><path d="M132 90 C 200 90, 200 196, 238 206"/><path d="M132 174 C 190 174, 200 212, 238 214"/><path d="M132 258 C 200 258, 200 228, 238 222"/></g><!-- the PanelPal box --><rect x="238" y="188" width="112" height="52" rx="10" fill="url(#dp-box)"/><rect x="248" y="200" width="44" height="4" rx="2" fill="#5f5f5d"/><rect x="248" y="208" width="44" height="4" rx="2" fill="#5f5f5d"/><rect x="248" y="216" width="44" height="4" rx="2" fill="#5f5f5d"/><circle cx="334" cy="228" r="4" fill="#0ca30c"/><circle cx="334" cy="228" r="7.5" fill="#0ca30c" opacity=".25"/><rect x="246" y="240" width="96" height="5" rx="2" fill="#161616" opacity=".25"/><text x="294" y="266" font-size="13" font-weight="700" fill="#161616" text-anchor="middle">PanelPal box</text><text x="294" y="283" font-size="11.5" fill="#5f5f5d" text-anchor="middle">runs on your site</text><g transform="translate(346 190) scale(1)"><circle r="15" fill="#2874d2"/><circle r="15" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M-5 -1 v-3.5 a5 5 0 0 1 10 0 v3.5" fill="none" stroke="#fff" stroke-width="2.2"/><rect x="-7.5" y="-1.5" width="15" height="11" rx="2" fill="#fff"/><circle cy="3.5" r="1.8" fill="#2874d2"/></g><!-- office screen with the dashboard --><path d="M300 188 V 176 H 368 V 167" fill="none" stroke="#5f5f5d" stroke-width="2"/><rect x="300" y="64" width="136" height="88" rx="8" fill="#1f2328"/><rect x="306" y="70" width="124" height="72" rx="4" fill="#fff"/><rect x="312" y="76" width="36" height="24" rx="3" fill="#dbf1db"/><rect x="352" y="76" width="36" height="24" rx="3" fill="#dbf1db"/><rect x="392" y="76" width="32" height="24" rx="3" fill="#fdf3dc"/><text x="318" y="93" font-size="10" font-weight="700" fill="#0b7a0b">312</text><text x="358" y="93" font-size="10" font-weight="700" fill="#0b7a0b">87%</text><text x="397" y="93" font-size="10" font-weight="700" fill="#8a5a00">42%</text><polyline points="312,132 328,124 344,128 360,114 376,118 392,108 408,112 424,104" fill="none" stroke="#2874d2" stroke-width="2"/><rect x="356" y="152" width="24" height="10" fill="#5f5f5d"/><rect x="344" y="162" width="48" height="5" rx="2" fill="#5f5f5d"/><text x="368" y="58" font-size="11.5" fill="#5f5f5d" text-anchor="middle">Your dashboard</text><!-- cut link to the cloud --><path d="M454 214 H 520" stroke="#c1c3bc" stroke-width="2.5" stroke-dasharray="4 5"/><circle cx="488" cy="214" r="13" fill="#fff" stroke="#8e8b8b" stroke-width="2.5"/><path d="M482 208 l12 12 M494 208 l-12 12" stroke="#8e8b8b" stroke-width="2.6" stroke-linecap="round"/><path d="M528 222 a16 16 0 0 1 2 -31 a22 22 0 0 1 42 -4 a15 15 0 0 1 14 25 a12 12 0 0 1 -6 10 z" fill="#f3f3f2" stroke="#c1c3bc" stroke-width="2"/><text x="556" y="250" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">Nothing</text><text x="556" y="265" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">leaves</text><text x="556" y="280" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">your site</text></g></svg><figcaption>On-prem: the cameras talk only to a small PanelPal computer on your site.</figcaption></figure>
+    <figure class="dp-fig"><svg class="dp-art" viewBox="0 0 600 340" role="img" aria-labelledby="dp-art-t"><title id="dp-art-t">On-prem: the cameras on three machines send their readings to a small PanelPal computer in your building. A screen in the office shows the dashboard. The link to the cloud is cut: nothing leaves your site.</title><defs><linearGradient id="dp-box" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3d40"/><stop offset="1" stop-color="#1f2328"/></linearGradient><pattern id="dp-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#ededec" stroke-width="1"/></pattern></defs><g font-family="Inter, system-ui, sans-serif"><!-- building --><rect x="14" y="34" width="440" height="292" rx="18" fill="url(#dp-grid)" stroke="#2874d2" stroke-width="2.5"/><rect x="14" y="34" width="440" height="292" rx="18" fill="#fff" opacity=".55"/><rect x="30" y="20" width="214" height="30" rx="15" fill="#2874d2"/><text x="137" y="40" font-size="13.5" font-weight="600" fill="#fff" text-anchor="middle">Your building · your network</text><!-- machines with cameras --><g><rect x="40" y="76" width="116" height="58" rx="8" fill="#fff" stroke="#a6a6a6" stroke-width="1.5"/><rect x="50" y="86" width="44" height="26" rx="3" fill="#1f2328"/><rect x="54" y="91" width="22" height="5" rx="1" fill="#6fd06f"/><rect x="54" y="100" width="32" height="5" rx="1" fill="#7fb3ee"/><text x="50" y="126" font-size="12" font-weight="600" fill="#161616">CNC mill 3</text><rect x="110" y="82" width="22" height="16" rx="4" fill="#fff" stroke="#5f5f5d" stroke-width="1.4"/><circle cx="121" cy="90" r="4.4" fill="#2874d2"/><circle cx="121" cy="90" r="1.6" fill="#fff"/></g><g><rect x="40" y="160" width="116" height="58" rx="8" fill="#fff" stroke="#a6a6a6" stroke-width="1.5"/><rect x="50" y="170" width="44" height="26" rx="3" fill="#1f2328"/><rect x="54" y="175" width="22" height="5" rx="1" fill="#6fd06f"/><rect x="54" y="184" width="32" height="5" rx="1" fill="#7fb3ee"/><text x="50" y="210" font-size="12" font-weight="600" fill="#161616">Press 2</text><rect x="110" y="166" width="22" height="16" rx="4" fill="#fff" stroke="#5f5f5d" stroke-width="1.4"/><circle cx="121" cy="174" r="4.4" fill="#2874d2"/><circle cx="121" cy="174" r="1.6" fill="#fff"/></g><g><rect x="40" y="244" width="116" height="58" rx="8" fill="#fff" stroke="#a6a6a6" stroke-width="1.5"/><rect x="50" y="254" width="44" height="26" rx="3" fill="#1f2328"/><rect x="54" y="259" width="22" height="5" rx="1" fill="#6fd06f"/><rect x="54" y="268" width="32" height="5" rx="1" fill="#7fb3ee"/><text x="50" y="294" font-size="12" font-weight="600" fill="#161616">Oven 1</text><rect x="110" y="250" width="22" height="16" rx="4" fill="#fff" stroke="#5f5f5d" stroke-width="1.4"/><circle cx="121" cy="258" r="4.4" fill="#2874d2"/><circle cx="121" cy="258" r="1.6" fill="#fff"/></g><!-- links: cameras to the box --><g fill="none" stroke="#2874d2" stroke-width="2.2" stroke-dasharray="5 6" class="dp-flow"><path d="M132 90 C 200 90, 200 196, 238 206"/><path d="M132 174 C 190 174, 200 212, 238 214"/><path d="M132 258 C 200 258, 200 228, 238 222"/></g><!-- the PanelPal box --><rect x="238" y="188" width="112" height="52" rx="10" fill="url(#dp-box)"/><rect x="248" y="200" width="44" height="4" rx="2" fill="#5f5f5d"/><rect x="248" y="208" width="44" height="4" rx="2" fill="#5f5f5d"/><rect x="248" y="216" width="44" height="4" rx="2" fill="#5f5f5d"/><circle cx="334" cy="228" r="4" fill="#0ca30c"/><circle cx="334" cy="228" r="7.5" fill="#0ca30c" opacity=".25"/><rect x="246" y="240" width="96" height="5" rx="2" fill="#161616" opacity=".25"/><text x="294" y="266" font-size="13" font-weight="700" fill="#161616" text-anchor="middle">PanelPal box</text><text x="294" y="283" font-size="11.5" fill="#5f5f5d" text-anchor="middle">runs on your site</text><g transform="translate(346 190) scale(1)"><circle r="15" fill="#2874d2"/><circle r="15" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M-5 -1 v-3.5 a5 5 0 0 1 10 0 v3.5" fill="none" stroke="#fff" stroke-width="2.2"/><rect x="-7.5" y="-1.5" width="15" height="11" rx="2" fill="#fff"/><circle cy="3.5" r="1.8" fill="#2874d2"/></g><!-- office screen with the dashboard --><path d="M300 188 V 176 H 368 V 167" fill="none" stroke="#5f5f5d" stroke-width="2"/><rect x="300" y="64" width="136" height="88" rx="8" fill="#1f2328"/><rect x="306" y="70" width="124" height="72" rx="4" fill="#fff"/><rect x="312" y="76" width="36" height="24" rx="3" fill="#dbf1db"/><rect x="352" y="76" width="36" height="24" rx="3" fill="#dbf1db"/><rect x="392" y="76" width="32" height="24" rx="3" fill="#fdf3dc"/><text x="318" y="93" font-size="10" font-weight="700" fill="#0b7a0b">312</text><text x="358" y="93" font-size="10" font-weight="700" fill="#0b7a0b">87%</text><text x="397" y="93" font-size="10" font-weight="700" fill="#8a5a00">42%</text><polyline points="312,132 328,124 344,128 360,114 376,118 392,108 408,112 424,104" fill="none" stroke="#2874d2" stroke-width="2"/><rect x="356" y="152" width="24" height="10" fill="#5f5f5d"/><rect x="344" y="162" width="48" height="5" rx="2" fill="#5f5f5d"/><text x="368" y="58" font-size="11.5" fill="#5f5f5d" text-anchor="middle">Your dashboard</text><!-- cut link to the cloud --><path d="M454 214 H 520" stroke="#c1c3bc" stroke-width="2.5" stroke-dasharray="4 5"/><circle cx="488" cy="214" r="13" fill="#fff" stroke="#8e8b8b" stroke-width="2.5"/><path d="M482 208 l12 12 M494 208 l-12 12" stroke="#8e8b8b" stroke-width="2.6" stroke-linecap="round"/><path d="M528 222 a16 16 0 0 1 2 -31 a22 22 0 0 1 42 -4 a15 15 0 0 1 14 25 a12 12 0 0 1 -6 10 z" fill="#f3f3f2" stroke="#c1c3bc" stroke-width="2"/><text x="556" y="250" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">Nothing</text><text x="556" y="265" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">leaves</text><text x="556" y="280" font-size="12" font-weight="600" fill="#5f5f5d" text-anchor="middle">your site</text></g></svg></figure>
     <blockquote class="dp-quote">
       <svg class="dp-lock" viewBox="-16 -16 32 32" aria-hidden="true"><g transform="translate(0 0) scale(1)">
   <circle r="15" fill="#2874d2"/><circle r="15" fill="none" stroke="#fff" stroke-width="2.5"/>
   <path d="M-5 -1 v-3.5 a5 5 0 0 1 10 0 v3.5" fill="none" stroke="#fff" stroke-width="2.2"/>
   <rect x="-7.5" y="-1.5" width="15" height="11" rx="2" fill="#fff"/><circle cy="3.5" r="1.8" fill="#2874d2"/></g></svg>
       <p class="q">Your data is yours. <em>Keep it in your building.</em></p>
-      <p>Some sites have rules that production data must not leave the building. On-prem is for them: readings stay on your own network, and nothing goes outside unless you choose.</p>
+      <p>For sites whose data must not leave the building.</p>
     </blockquote>
   </div>
-  <p class="note">Tell us which one you need when you book your demo. The demo on this site shows both options.</p>
 </div></section>
 
 <section id="reads"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">What it can read</p><h2 class="h2">One camera, many kinds of reading.</h2><p>Each value gets the reader that suits it. The vision model marks the area one time, and you confirm it.</p></div>
+  <div class="sec-head"><p class="eyebrow">What it can read</p><h2 class="h2">One camera, many kinds of reading.</h2><p>Each value gets the right reader. You confirm it once.</p></div>
   <ul class="rg" aria-label="Examples of what each reader reads">
     <li><div class="rg-im"><svg viewBox="0 0 160 100" role="img" aria-label="Controller panel with an LCD screen showing temperature 21.4 degrees and humidity 65 percent, the temperature boxed by the camera. Illustration."><title>Controller panel with an LCD screen showing temperature 21.4 degrees and humidity 65 percent, the temperature boxed by the camera</title><defs><linearGradient id="rg-panel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f3f2"/><stop offset="1" stop-color="#c1c3bc"/></linearGradient><linearGradient id="rg-lcd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfdcb8"/><stop offset="1" stop-color="#a7bc89"/></linearGradient><linearGradient id="rg-btn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d8d8d4"/></linearGradient></defs><rect x="16" y="14" width="128" height="72" rx="5" fill="url(#rg-panel)" stroke="#8e8b8b"/><circle cx="21" cy="19" r="1.6" fill="#a6a6a6" stroke="#6a6a68" stroke-width=".5"/><circle cx="139" cy="19" r="1.6" fill="#a6a6a6" stroke="#6a6a68" stroke-width=".5"/><circle cx="21" cy="81" r="1.6" fill="#a6a6a6" stroke="#6a6a68" stroke-width=".5"/><circle cx="139" cy="81" r="1.6" fill="#a6a6a6" stroke="#6a6a68" stroke-width=".5"/><rect x="25" y="22" width="78" height="44" rx="2.5" fill="#2a2c2e"/><rect x="28" y="25" width="72" height="38" rx="1" fill="url(#rg-lcd)"/><g font-family="JetBrains Mono, ui-monospace, monospace" fill="#1f2a14"><text x="32" y="33" font-size="5">TEMP</text><text x="96" y="43" font-size="13" font-weight="500" text-anchor="end">21.4°</text><text x="32" y="51" font-size="5">RH</text><text x="96" y="58" font-size="8" font-weight="500" text-anchor="end">65 %</text></g><rect x="55" y="30" width="44" height="16" rx="1.5" fill="none" stroke="#2f8fd0" stroke-width="1.4"/><rect x="110" y="24" width="22" height="9" rx="2" fill="url(#rg-btn)" stroke="#6a6a68" stroke-width=".6"/><text x="121" y="30.4" font-family="Inter, system-ui, sans-serif" font-size="5.5" font-weight="700" fill="#2a2c2e" text-anchor="middle">▲</text><rect x="110" y="36" width="22" height="9" rx="2" fill="url(#rg-btn)" stroke="#6a6a68" stroke-width=".6"/><text x="121" y="42.4" font-family="Inter, system-ui, sans-serif" font-size="5.5" font-weight="700" fill="#2a2c2e" text-anchor="middle">▼</text><rect x="110" y="48" width="22" height="9" rx="2" fill="url(#rg-btn)" stroke="#6a6a68" stroke-width=".6"/><text x="121" y="54.4" font-family="Inter, system-ui, sans-serif" font-size="5" font-weight="700" fill="#2a2c2e" text-anchor="middle">SET</text><circle cx="114" cy="68" r="2.6" fill="#0ca30c"/><circle cx="114" cy="68" r="4.5" fill="#0ca30c" opacity=".2"/><circle cx="125" cy="68" r="2.6" fill="#c1c3bc"/><rect x="25" y="72" width="78" height="7" rx="1" fill="#d8d8d4"/><text x="64" y="77.4" font-family="Inter, system-ui, sans-serif" font-size="4.6" font-weight="600" fill="#5f5f5d" text-anchor="middle" letter-spacing=".6">CONTROLLER</text></svg></div><span>Screens and panels</span></li>
     <li><div class="rg-im"><svg viewBox="0 0 160 100" role="img" aria-label="Seven-segment display showing 07.28. Illustration."><title>Seven-segment display showing 07.28</title><defs><linearGradient id="rg-seg-on" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a4a"/><stop offset="1" stop-color="#e5372a"/></linearGradient></defs><rect x="30" y="28" width="100" height="48" rx="4" fill="#1f2328"/><rect x="34" y="32" width="92" height="40" rx="2" fill="#120707"/><rect x="43.8" y="35.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="43.8" y="65.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="43.8" y="50.0" width="7.4" height="4.0" rx="1.2" fill="#24090a"/><rect x="39.0" y="39.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="52.0" y="39.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="39.0" y="52.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="52.0" y="52.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="65.3" y="35.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="65.3" y="65.0" width="7.4" height="4.0" rx="1.2" fill="#24090a"/><rect x="65.3" y="50.0" width="7.4" height="4.0" rx="1.2" fill="#24090a"/><rect x="60.5" y="39.8" width="4.0" height="11.4" rx="1.2" fill="#24090a"/><rect x="73.5" y="39.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="60.5" y="52.8" width="4.0" height="11.4" rx="1.2" fill="#24090a"/><rect x="73.5" y="52.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="86.8" y="35.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="86.8" y="65.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="86.8" y="50.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="82.0" y="39.8" width="4.0" height="11.4" rx="1.2" fill="#24090a"/><rect x="95.0" y="39.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="82.0" y="52.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="95.0" y="52.8" width="4.0" height="11.4" rx="1.2" fill="#24090a"/><rect x="108.3" y="35.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="108.3" y="65.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="108.3" y="50.0" width="7.4" height="4.0" rx="1.2" fill="url(#rg-seg-on)"/><rect x="103.5" y="39.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="116.5" y="39.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="103.5" y="52.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><rect x="116.5" y="52.8" width="4.0" height="11.4" rx="1.2" fill="url(#rg-seg-on)"/><circle cx="79.5" cy="68" r="1.9" fill="url(#rg-seg-on)"/></svg></div><span>Digit displays</span></li>
@@ -181,41 +177,40 @@
   <table class="tbl">
     <thead><tr><th>Reader</th><th>Reads</th><th>Examples</th></tr></thead>
     <tbody>
-      <tr class="built"><td>Digits and text</td><td>Numbers and words on screens</td><td class="ex">Growth chamber and incubator controllers, balances, pH and EC meters, temperature controllers, motor drive displays, old PCs that run instrument software</td></tr>
-      <tr class="built"><td>Dial</td><td>A needle's position on a printed scale</td><td class="ex">Hydraulic, pneumatic and vacuum gauges, CO₂ cylinder regulators, autoclave pressure, liquid nitrogen dewar levels, bimetal thermometers</td></tr>
-      <tr class="built"><td>Counter</td><td>Rolling digit wheels</td><td class="ex">Water, gas and electricity meters, hour meters, mechanical cycle counters</td></tr>
-      <tr class="built"><td>Colour</td><td>A state or a colour index</td><td class="ex">Stack lights and panel LEDs, chamber lights on or off, pH colour change, leaf greenness</td></tr>
-      <tr class="built"><td>Level</td><td>How full something is</td><td class="ex">Sight glasses, hydroponic tanks, carboys, coolant and waste containers</td></tr>
-      <tr class="built"><td>Presence</td><td>Whether something is there</td><td class="ex">A tray on a shelf, a door or guard open, a part in a fixture</td></tr>
+      <tr class="built"><td>Digits and text</td><td>Numbers and words on screens</td><td class="ex">Controllers, balances, pH meters, drive displays</td></tr>
+      <tr class="built"><td>Dial</td><td>A needle's position on a printed scale</td><td class="ex">Pressure and vacuum gauges, regulators, thermometers</td></tr>
+      <tr class="built"><td>Counter</td><td>Rolling digit wheels</td><td class="ex">Utility meters, hour meters, cycle counters</td></tr>
+      <tr class="built"><td>Colour</td><td>A state or a colour index</td><td class="ex">Stack lights, panel LEDs, colour changes</td></tr>
+      <tr class="built"><td>Level</td><td>How full something is</td><td class="ex">Sight glasses, tanks, coolant containers</td></tr>
+      <tr class="built"><td>Presence</td><td>Whether something is there</td><td class="ex">A tray on a shelf, a guard open, a part in place</td></tr>
       <tr class="built"><td>Motion</td><td>Running or idle</td><td class="ex">Shakers, stirrers, fans, conveyors, spindles</td></tr>
       <tr class="built"><td>Count</td><td>How many objects</td><td class="ex">Pots in a tray, parts in a bin</td></tr>
       <tr class="built"><td>Area</td><td>How much of an area one colour covers</td><td class="ex">Canopy cover per tray, spills, rust</td></tr>
     </tbody>
   </table>
-  <p class="note">Colour, level, presence, motion, count and area are simple filters on the same frames. They are indicators, not calibrated measurements, and the app labels them that way.</p>
 </div></section>
 
 <section id="camera"><div class="wrap camsec">
-  <div><div class="frame"><img src="img/camera-view-clean.jpg" alt="Camera view of a growth chamber controller with four boxed values"></div><p class="cap">What the camera sees on a growth room controller · rendered mock-up · example data</p></div>
+  <div><div class="frame"><img src="img/camera-view-clean.jpg" alt="Camera view of a growth chamber controller with four boxed values"></div></div>
   <div>
     <p class="eyebrow">The camera view</p>
     <h2 class="h2">Every number comes with its picture.</h2>
     <ul class="facts">
-      <li><span class="ic">1</span><div><b>The AI marks each value one time</b><span>It puts a box around each value and gives it a name. You confirm the boxes.</span></div></li>
-      <li><span class="ic">2</span><div><b>The camera reads several times a second</b><span>It reads only the boxed values. It does this on the device.</span></div></li>
-      <li><span class="ic">3</span><div><b>Each reading has a confidence score</b><span>A low score tells you to check the reading. If the camera loses the screen, the app shows "No signal". It does not guess.</span></div></li>
-      <li><span class="ic">4</span><div><b>The frame is kept</b><span>You can compare any number with the image it came from.</span></div></li>
+      <li><span class="ic">1</span><div><b>The AI marks each value once</b><span>You confirm the boxes.</span></div></li>
+      <li><span class="ic">2</span><div><b>Reads several times a second</b><span>Only the boxed values, on the device.</span></div></li>
+      <li><span class="ic">3</span><div><b>Every reading has a confidence score</b><span>Low scores are flagged. No screen, no guess.</span></div></li>
+      <li><span class="ic">4</span><div><b>The frame is kept</b><span>Check any number against its image.</span></div></li>
     </ul>
     <div class="conf"><span style="background:var(--color-cam-high)">30 °C high</span><span style="background:var(--color-cam-mid)">22 °C check</span><span style="background:var(--color-cam-low)">15 °C low</span></div>
   </div>
 </div></section>
 
 <section id="hardware"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">Hardware</p><h2 class="h2">A small reader in front of the display. It never touches the machine.</h2><p>These are rendered mock-ups, not photos.</p></div>
+  <div class="sec-head"><p class="eyebrow">Hardware</p><h2 class="h2">Sits in front of the display. Never touches the machine.</h2></div>
   <div class="hw">
-    <figure class="a"><div class="im"><img src="img/img-008.jpg" alt="Small white cube camera on a round stand on a lab bench, with its lens turned toward an incubator touchscreen"></div><figcaption><b>On a lab bench</b>About 22 cm from a 7-inch controller, tilted to frame the whole screen.</figcaption></figure>
-    <figure class="b"><div class="im"><img src="img/img-009.jpg" alt="Two growth chambers. On each, a small white camera on a gooseneck arm sits above the controller screen and points down at it"></div><figcaption><b>At a growth chamber</b>A magnetic gooseneck holds the camera about 19 cm in front of the controller.</figcaption></figure>
-    <figure class="c c2"><div class="im"><img src="img/img-011.jpg" alt="Small white camera case with a round lens window, alone and on a magnetic stand"></div><figcaption><b>Current case</b>About 25 × 30 × 19 mm, with a status light and a magnetic stand.</figcaption></figure>
+    <figure class="a"><div class="im"><img src="img/img-008.jpg" alt="Small white cube camera on a round stand on a lab bench, with its lens turned toward an incubator touchscreen"></div><figcaption><b>On a lab bench</b></figcaption></figure>
+    <figure class="b"><div class="im"><img src="img/img-009.jpg" alt="Two growth chambers. On each, a small white camera on a gooseneck arm sits above the controller screen and points down at it"></div><figcaption><b>At a growth chamber</b></figcaption></figure>
+    <figure class="c c2"><div class="im"><img src="img/img-011.jpg" alt="Small white camera case with a round lens window, alone and on a magnetic stand"></div><figcaption><b>The reader</b></figcaption></figure>
   </div>
 </div></section>
 
@@ -223,15 +218,15 @@
   <div>
     <p class="eyebrow">Not a factory?</p>
     <h2 class="h2">One device is enough to start.</h2>
-    <p class="lead" style="margin-top:14px">A lab that wants one centrifuge on record can skip the layout. Describe it, point a camera at its display, and the app logs every run. Add more devices, or a whole site, later.</p>
+    <p class="lead" style="margin-top:14px">Point one camera at one display and log every run. Add more later.</p>
   </div>
   <div class="phones"><img src="img/sa-describe.png" alt="Phone screen: What do you want to monitor? Single device"><img src="img/sc-live.png" alt="Phone screen: Centrifuge 1 live view"></div>
 </div></section>
 
 <section id="plans"><div class="wrap">
-  <div class="sec-head"><p class="eyebrow">Plans</p><h2 class="h2">Every plan gets the layout. Higher plans draw it in more detail.</h2><p>Every plan includes the AI setup and the first dashboard. Plans can change.</p></div>
+  <div class="sec-head"><p class="eyebrow">Plans</p><h2 class="h2">Every plan gets the layout. Higher plans add detail.</h2><p>AI setup on every plan. Plans can change.</p></div>
   <div class="tiers">
-    <div class="card tier"><div class="thumb"><img src="img/tier-free.png" alt="Machine tiles view"></div><div class="body"><span class="view">Machine tiles</span><h3>Basic</h3><div class="price">Up to 3 machines · example plan</div>
+    <div class="card tier"><div class="thumb"><img src="img/tier-free.png" alt="Machine tiles view"></div><div class="body"><span class="view">Machine tiles</span><h3>Basic</h3><div class="price">Up to 3 machines</div>
       <ul><li>Dashboard built by the AI</li><li>Live view for each machine</li><li>30 days of history</li><li>Automatic recalibration</li></ul>
       <a class="btn ghost" href="#join">Book a demo</a></div></div>
     <div class="card tier pro"><div class="thumb"><img src="img/tier-pro.png" alt="2D floor plan view"></div><div class="body"><span class="view">2D floor plan</span><h3>Pro</h3><div class="price">Price to come</div>
@@ -242,19 +237,19 @@
       <a class="btn ghost" href="#join">Book a demo</a></div></div>
   </div>
   <div class="offer">
-    <div><b>Start with one machine</b><span>One camera on one screen. See your first live numbers and AI insights in an afternoon.</span></div>
-    <div><b>No downtime</b><span>The machine keeps running while you set up. Nothing is wired in, and removing it changes nothing.</span></div>
-    <div><b>Recalibration is included</b><span>If a screen layout changes, the camera maps it again, on every plan.</span></div>
+    <div><b>Start with one machine</b><span>Live numbers and AI insights in an afternoon.</span></div>
+    <div><b>No downtime</b><span>Nothing wired in. Machines keep running.</span></div>
+    <div><b>Recalibration included</b><span>If a screen changes, it maps it again.</span></div>
   </div>
 </div></section>
 
 <section id="privacy"><div class="wrap">
   <div class="sec-head"><p class="eyebrow">Privacy &amp; data</p><h2 class="h2">What we read, and what we keep.</h2></div>
   <div class="priv">
-    <div class="card"><h3>The camera sees only the screen</h3><p>You point it at a display or gauge. It does not connect to the machine or its controller.</p></div>
-    <div class="card"><h3>You choose what is read</h3><p>The AI suggests values. You tick the ones to log.</p></div>
-    <div class="card"><h3>You can check every number</h3><p>Each reading keeps the frame it came from and a confidence score.</p></div>
-    <div class="card"><h3>You choose where your data is stored</h3><p>Privately in our cloud. Or, if it must stay on site, on a PanelPal computer in your building. <a href="#data">Compare the two</a>.</p></div>
+    <div class="card"><h3>The camera sees only the screen</h3><p>It never connects to the machine.</p></div>
+    <div class="card"><h3>You choose what is read</h3><p>The AI suggests. You tick what to log.</p></div>
+    <div class="card"><h3>You can check every number</h3><p>Each reading keeps its frame and a confidence score.</p></div>
+    <div class="card"><h3>You choose where it is stored</h3><p>Our cloud, or a PanelPal computer on site. <a href="#data">Compare</a></p></div>
   </div>
 </div></section>
 
@@ -279,7 +274,7 @@
 f.addEventListener("submit",function(e){e.preventDefault();b.disabled=true;s.className="wl-status";s.textContent="Sending…";
 fetch(f.action,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(Object.fromEntries(new FormData(f)))})
 .then(function(r){return r.json().then(function(j){if(!r.ok||!j.success)throw 0})})
-.then(function(){f.reset();s.className="wl-status ok";s.textContent="Thank you. We will reply by email soon."})
+.then(function(){f.reset();s.className="wl-status ok";s.textContent="Thank you, our team will be in touch soon."})
 .catch(function(){s.className="wl-status err";s.innerHTML='That did not send. Please try again, or email <a href="mailto:contact@panelpal.co.uk">contact@panelpal.co.uk</a>.'})
 .finally(function(){b.disabled=false})})})()</script>
   </div>
