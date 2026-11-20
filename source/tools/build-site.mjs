@@ -174,7 +174,7 @@ must('<a href="#how">How it works</a>', '<a href="#how">How it works</a><a href=
 must('<a href="#camera">The camera</a>', "");
 must('<h2 class="h2">The AI does the setup. Cameras feed the dashboard.</h2>', '<h2 class="h2">The AI does the setup. You get the answers.</h2>');
 must("<h3>Feed it with cameras</h3><p>Put a small camera in front of each screen or gauge. It reads the values every few seconds.</p>",
-  "<h3>Connect your screens</h3><p>A small reader sits in front of each screen. No wiring, no downtime.</p>");
+  "<h3>Connect our cameras</h3><p>One small camera in front of each screen. No wiring, no downtime.</p>");
 must(`    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, every few seconds</span></div>\n  </div>`,
   `    <div class="node end"><b>On-device reading</b><span>reads only the mapped values, every few seconds</span></div>
     <div class="lbl">Insights</div>
@@ -188,7 +188,7 @@ must('<p class="eyebrow">Camera hardware</p><h2 class="h2">It sits in front of t
 must("<span>One camera on one screen. See your first live numbers in an afternoon.</span>", "<span>Live numbers and AI insights in an afternoon.</span>");
 must("<b>Nothing to wire</b><span>The camera does not connect to the machine. Remove it and nothing changes.</span>",
   "<b>No downtime</b><span>Nothing wired in. Machines keep running.</span>");
-must('<h2 class="h2">What the camera sees, and what we keep.</h2>', '<h2 class="h2">What we read, and what we keep.</h2>');
+must('<h2 class="h2">What the camera sees, and what we keep.</h2>', '<h2 class="h2">Your data is yours. And it stays private.</h2>');
 must('<h2 class="h2">See PanelPal on your own screens.</h2>', '<h2 class="h2">Contact us</h2>');
 // 20 Nov (sam-eee): the entry plan is "Basic", with no mention of it being free.
 must("<h3>Free</h3>", "<h3>Basic</h3>");
@@ -207,6 +207,15 @@ const cut = (id) => { const a = h.indexOf(`<section id="${id}">`), b = h.indexOf
   if (a < 0 || h.slice(b - 12, b) !== "</section>\n\n") throw new Error(`section order: cannot cut #${id}`); const sec = h.slice(a, b); h = h.slice(0, a) + h.slice(b); return sec; };
 { const ins = cut("insights"); must('<section id="data">', ins + '<section id="data">');
   const cam = cut("camera"); must('<section id="hardware">', cam + '<section id="hardware">'); }
+// 20 Nov (sam-eee): the privacy section is about ownership and privacy: the data is theirs and it is kept private.
+{ const a = h.indexOf('<div class="priv">'), b = h.indexOf("</div>\n</div></section>", a);
+  if (a < 0 || b < 0 || !h.slice(a, b).includes("The camera sees only the screen")) throw new Error("privacy: card grid not found");
+  h = h.slice(0, a) + `<div class="priv">
+    <div class="card"><h3>Yours, always</h3><p>You own every reading. Export or delete it any time.</p></div>
+    <div class="card"><h3>Private to your company</h3><p>Encrypted, and only the people you invite can see it.</p></div>
+    <div class="card"><h3>Never sold or shared</h3><p>We never sell your data or pass it to anyone else.</p></div>
+    <div class="card"><h3>You choose where it lives</h3><p>Our cloud, or our AI box on your site. <a href="#data">Compare</a></p></div>
+  ` + h.slice(b); }
 // 20 Nov (sam-eee): shorter copy everywhere, and no captions or "example data" labels under images.
 for (const [from, to] of [
   ["<p>The AI does the work of a controls engineer: it finds what is on your floor, what to measure and how to show it.</p>", "<p>It does the work of a controls engineer.</p>"],
@@ -238,9 +247,6 @@ for (const [from, to] of [
   ["<p class=\"lead\" style=\"margin-top:14px\">A lab that wants one centrifuge on record can skip the layout. Describe it, point a camera at its display, and the app logs every run. Add more devices, or a whole site, later.</p>", "<p class=\"lead\" style=\"margin-top:14px\">Point one camera at one display and log every run. Add more later.</p>"],
   ["<h2 class=\"h2\">Every plan gets the layout. Higher plans draw it in more detail.</h2>", "<h2 class=\"h2\">Every plan gets the layout. Higher plans add detail.</h2>"],
   ["<b>Recalibration is included</b><span>If a screen layout changes, the camera maps it again, on every plan.</span>", "<b>Recalibration included</b><span>If a screen changes, it maps it again.</span>"],
-  ["<p>You point it at a display or gauge. It does not connect to the machine or its controller.</p>", "<p>It never connects to the machine.</p>"],
-  ["<p>The AI suggests values. You tick the ones to log.</p>", "<p>The AI suggests. You tick what to log.</p>"],
-  ["<p>Each reading keeps the frame it came from and a confidence score.</p>", "<p>Each reading keeps its frame and a confidence score.</p>"],
   ["\n    <span class=\"pill ex tag\">Example data</span>", ""],
   ["\n    <p class=\"cap\">Example data</p>", ""],
   ["<p class=\"cap\">What the camera sees on a growth room controller · rendered mock-up · example data</p>", ""],
