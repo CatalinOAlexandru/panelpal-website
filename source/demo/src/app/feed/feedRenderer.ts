@@ -7,8 +7,9 @@
 import * as THREE from "three";
 import type { MachineType } from "../../../../shared/floorplan";
 import { MACHINES, clock } from "../../data";
-import { gaugeSignals, panelSignals, type Signal } from "../world";
-import { HMI_H, HMI_W, MEDIUM, drawGaugeFace, drawHmi, hmiTitle, isPlate } from "./hmi";
+import { SIGNALS, gaugeSignals, panelSignals, type Signal } from "../world";
+const SIGS_OF = (id: string) => SIGNALS[id];
+import { HMI_H, HMI_W, MEDIUM, drawGaugeFace, drawHmi, drawInstrument2D, hmiTitle, instrumentSize, isPlate } from "./hmi";
 
 export const FEED_W = 560, FEED_H = 350;
 
@@ -22,8 +23,8 @@ function renderer() {
   return gl;
 }
 
-interface GaugeTex { sig: Signal; cv: HTMLCanvasElement; tex: THREE.CanvasTexture }
-interface Entry { mount: THREE.Group | null; gauges: GaugeTex[]; hasScreen: boolean; panel: THREE.Group; scene: THREE.Scene; cam: THREE.PerspectiveCamera; hmi: HTMLCanvasElement; tex: THREE.CanvasTexture; look: THREE.Vector3; home: THREE.Vector3; at: number }
+interface GaugeTex { sig: Signal; cv: HTMLCanvasElement; tex: THREE.CanvasTexture; /** Draw the instrument at this time on the demo clock. */ redraw: (tick: number) => void }
+interface Entry { /** The box round everything the camera reads: points in the space of `obj`. */ area: { obj: THREE.Object3D; pts: [number, number, number][] } | null; mount: THREE.Group | null; gauges: GaugeTex[]; hasScreen: boolean; panel: THREE.Group; scene: THREE.Scene; cam: THREE.PerspectiveCamera; hmi: HTMLCanvasElement; tex: THREE.CanvasTexture; look: THREE.Vector3; home: THREE.Vector3; at: number }
 const cache = new Map<string, Entry>();
 
 const mat = (c: string, o: Partial<THREE.MeshStandardMaterialParameters> = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.75, metalness: 0.05, ...o });
@@ -76,7 +77,7 @@ function body(g: THREE.Group, type: MachineType) {
   }
 }
 
-type Mount = "pendant" | "flush" | "cabinet" | "pedestal" | "desk" | "post" | "pipes";
+type Mount = "pendant" | "flush" | "cabinet" | "pedestal" | "desk" | "post" | "pipes" | "instruments";
 interface Cfg { mount: Mount; pos: [number, number, number]; yaw: number; pitch: number; scale: number; cam: [number, number, number]; /** Look this far above or below the panel (a machine with gauges below its screen). */ lookDy?: number }
 /** Where each machine's panel is, how it is mounted and where the camera stands: a different view for each machine. */
 const CFG: Record<string, Cfg> = {
@@ -85,7 +86,7 @@ const CFG: Record<string, Cfg> = {
   cnc3: { mount: "flush", pos: [-0.68, 1.15, 0.43], yaw: 0, pitch: 0, scale: 0.7, cam: [0.2, 1.4, 2.4] },
   cnc4: { mount: "pedestal", pos: [0.2, 1.25, 0.7], yaw: -0.2, pitch: -0.05, scale: 1, cam: [0.9, 1.4, 2.5] },
   saw: { mount: "cabinet", pos: [1.0, 1.3, 0.2], yaw: 0.15, pitch: 0, scale: 0.8, cam: [0.8, 1.2, 3.3], lookDy: -0.2 },
-  wash: { mount: "cabinet", pos: [0.75, 1.3, 0.2], yaw: 0.45, pitch: 0, scale: 0.9, cam: [-0.2, 1.3, 3.1], lookDy: -0.2 },
+  wash: { mount: "instruments", pos: [0.85, 1.25, 0.25], yaw: 0.4, pitch: 0, scale: 1, cam: [-0.1, 1.3, 3.0] },
   press1: { mount: "flush", pos: [-1.4, 1.35, 0.14], yaw: 0, pitch: -0.12, scale: 0.62, cam: [0.4, 1.0, 2.3] },
   press2: { mount: "cabinet", pos: [2.2, 1.35, 0.2], yaw: -0.4, pitch: 0, scale: 0.85, cam: [0.5, 1.4, 3.5], lookDy: -0.2 },
   weld1: { mount: "flush", pos: [-1.2, 1.15, 0.3], yaw: 0.12, pitch: -0.05, scale: 0.75, cam: [0.5, 1.3, 2.3] },
@@ -108,7 +109,24 @@ function addGauge(g: THREE.Group, x: number, pipeY: number, z: number, sig: Sign
   const cv = document.createElement("canvas"); cv.width = cv.height = 256;
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
   const face = new THREE.Mesh(new THREE.CircleGeometry(R3 * 1.07, 40), new THREE.MeshBasicMaterial({ map: tex })); face.position.set(x, cy, z + 0.037); g.add(face);
-  return { sig, cv, tex };
+  const redraw = (tick: number) => { const c = cv.getContext("2d")!; c.clearRect(0, 0, 256, 256); drawGaugeFace(c, 128, 128, 126, sig, Number(sig.value(tick))); };
+  return { sig, cv, tex, redraw };
+}
+
+/** An instrument fixed to a plate (no pipe): a round gauge, a sight glass, a lamp with a label or a counter. `w` and `h` are in metres. */
+function addPlateInstrument(g: THREE.Group, x: number, y: number, z: number, h: number, sig: Signal): GaugeTex {
+  const [pw, ph] = instrumentSize(sig), w = (h * pw) / ph;
+  const cv = document.createElement("canvas"); cv.width = pw; cv.height = ph;
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  if (sig.style === "dial") {
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(h / 2 * 1.04, h / 2 * 1.04, 0.07, 28), mat("#b8bec4", { metalness: 0.7, roughness: 0.3 })); body.rotation.x = Math.PI / 2; body.position.set(x, y, z); g.add(body);
+    const face = new THREE.Mesh(new THREE.CircleGeometry(h / 2 * 1.04, 40), new THREE.MeshBasicMaterial({ map: tex })); face.position.set(x, y, z + 0.037); g.add(face);
+  } else {
+    box(g, w + 0.04, h + 0.04, 0.05, "#4a4f55", x, y, z - 0.005);
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex })); face.position.set(x, y, z + 0.022); g.add(face);
+  }
+  const redraw = (tick: number) => { const c = cv.getContext("2d")!; c.clearRect(0, 0, pw, ph); drawInstrument2D(c, sig, sig.value(tick), pw, ph); };
+  return { sig, cv, tex, redraw };
 }
 
 /** A row of gauges, each on its own pipe segment (the colour says what is in the pipe), with end flanges and a hand valve. */
@@ -165,7 +183,8 @@ function build(id: string, type: MachineType): Entry {
   const hmi = document.createElement("canvas"); hmi.width = HMI_W; hmi.height = HMI_H;
   const tex = new THREE.CanvasTexture(hmi); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
   const gauges: GaugeTex[] = [];
-  const hasScreen = c.mount !== "pipes";
+  const hasScreen = c.mount !== "pipes" && c.mount !== "instruments";
+  let areaOf: Entry["area"] = null;
   const panel = new THREE.Group();
   let mountGroup: THREE.Group | null = null;
   if (c.mount === "pipes") {
@@ -182,6 +201,14 @@ function build(id: string, type: MachineType): Entry {
       }
     }
     cyl(g, 0.045, 1.3, MEDIUM[gaugeSignals(id)[0].pipe ?? "oil"], -1.3, 1.9, 0.0); cyl(g, 0.045, 1.3, MEDIUM.oil, 1.3, 1.9, 0.0);
+  } else if (c.mount === "instruments") {
+    // no screen: real instruments fixed to a plate on a post, next to the machine
+    const mount = new THREE.Group(); mountGroup = mount; mount.position.set(...c.pos); mount.rotation.y = c.yaw; mount.scale.setScalar(c.scale); g.add(mount);
+    box(mount, 1.3, 1.15, 0.1, "#cfd3cd", 0, 0, -0.07); box(mount, 0.1, c.pos[1] + 0.4, 0.1, "#7f8a94", 0, -(c.pos[1] + 0.4) / 2 - 0.5, -0.12);
+    const ins = SIGS_OF(id);
+    const place: [number, number, number][] = [[-0.3, 0.2, 0.36], [0.33, 0.2, 0.5], [-0.28, -0.32, 0.2], [0.3, -0.32, 0.2]];
+    ins.forEach((s, i) => { const p = place[i]; gauges.push(addPlateInstrument(mount, p[0], p[1], 0.0, p[2], s)); });
+    areaOf = { obj: mount, pts: [[-0.65, 0.58, 0.05], [0.65, 0.58, 0.05], [0.65, -0.58, 0.05], [-0.65, -0.58, 0.05]] };
   } else {
     const mount = new THREE.Group(); mountGroup = mount; mount.position.set(...c.pos); mount.rotation.y = c.yaw; mount.scale.setScalar(c.scale); g.add(mount);
     fixture(mount, c.mount, plate, c.pos[1] / c.scale);
@@ -197,7 +224,8 @@ function build(id: string, type: MachineType): Entry {
   cam.position.copy(home);
   const look = new THREE.Vector3(c.pos[0], c.pos[1] + (c.lookDy ?? 0), c.pos[2]);
   cam.lookAt(look);
-  return { mount: mountGroup, gauges, hasScreen, panel, scene, cam, hmi, tex, look, home, at: -1 };
+  if (c.mount === "pipes") areaOf = { obj: panel, pts: [[-1.15, 2.0, 0], [1.15, 2.0, 0], [1.15, 0.4, 0], [-1.15, 0.4, 0]] };
+  return { area: areaOf, mount: mountGroup, gauges, hasScreen, panel, scene, cam, hmi, tex, look, home, at: -1 };
 }
 
 function entry(id: string): Entry {
@@ -215,11 +243,7 @@ function paint(e: Entry, id: string, tick: number, running: boolean) {
     drawHmi(e.hmi.getContext("2d")!, hmiTitle(id), sigs, sigs.map((s) => s.value(tick)), clock(tick, true), running, isPlate(id));
     e.tex.needsUpdate = true;
   }
-  for (const gt of e.gauges) { // the needles move with the readings
-    const c = gt.cv.getContext("2d")!; c.clearRect(0, 0, 256, 256);
-    drawGaugeFace(c, 128, 128, 126, gt.sig, Number(gt.sig.value(tick)));
-    gt.tex.needsUpdate = true;
-  }
+  for (const gt of e.gauges) { gt.redraw(tick); gt.tex.needsUpdate = true; } // the needles and counters move with the readings
 }
 
 /** Draw one feed picture into `target`. */
@@ -243,10 +267,10 @@ export function screenCorners(id: string): [number, number][] {
   const e = entry(id);
   e.cam.position.copy(e.home); e.cam.lookAt(e.look); e.cam.updateMatrixWorld(); e.cam.updateProjectionMatrix();
   e.scene.updateMatrixWorld(true); // the scene may not have been drawn yet
-  // one box round everything the camera reads: the screen, plus the gauges on the pipe below it, or just the gauges
+  // one box round everything the camera reads: the screen, plus the gauges on the pipe below it, or just the instruments
   let pts: [number, number, number][];
   let local: THREE.Object3D | null = e.panel;
-  if (!e.hasScreen) pts = [[-1.15, 2.0, 0], [1.15, 2.0, 0], [1.15, 0.4, 0], [-1.15, 0.4, 0]];
+  if (e.area) { local = e.area.obj; pts = e.area.pts; }
   else if (e.gauges.length && e.mount) { local = e.mount; pts = [[-0.68, 0.36, 0.07], [0.68, 0.36, 0.07], [0.68, -1.05, 0.07], [-0.68, -1.05, 0.07]]; }
   else { const w = 0.45, h = 0.45 * HMI_H / HMI_W; pts = [[-w, h, 0.04], [w, h, 0.04], [w, -h, 0.04], [-w, -h, 0.04]]; }
   return pts.map(([x, y, z]) => {

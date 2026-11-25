@@ -9,16 +9,16 @@ import type { MachineStatus } from "./ui";
 
 /* ---------------------------------- world state ---------------------------------- */
 
-/** How much of CNC mill 3 is set up. The dress rehearsal walks it from "none" to "live". */
+/** How much of CNC mill 3 is set up. The camera walkthrough moves it from "none" to "live". */
 export interface World {
   /** none: no camera on the machine. camera: camera picked, values not mapped. live: values read. */
   cnc3: "none" | "camera" | "live";
-  /** The camera for CNC mill 3 exists (it was connected in the rehearsal). */
+  /** The camera for CNC mill 3 exists (it is connected in the walkthrough). */
   cam3: boolean;
   /** How often the camera of CNC mill 3 sends a picture to PanelPal. Optional. */
   pics3: PicMode;
 }
-export const FINISHED: World = { cnc3: "live", cam3: true, pics3: "10min" };
+export const FINISHED: World = { cnc3: "live", cam3: true, pics3: "off" };
 
 /** What the camera sends to the PanelPal server besides the readings. Always optional. */
 export type PicMode = "off" | "10min" | "unsure";
@@ -68,20 +68,25 @@ const gauge = (id: string, label: string, unit: string, base: number, amp: numbe
   ({ id, label, unit, kind: "number", conf, style: "dial", range, phys: true, pipe: "oil", value: (t) => Math.round((base + wave(t, 7) * amp) * 10) / 10, ...extra });
 const open = (id: string, label: string, v: string, conf = 0.94): Signal => ({ ...word(id, label, v, conf), style: "valve" });
 
+/** A physical instrument fixed to the machine (not on a screen). With a `pipe` it is a gauge on a pipe; without, it is fixed to a plate. */
+const phys = (s: Signal, style: NonNullable<Signal["style"]>, range?: [number, number]): Signal => ({ ...s, style, range, phys: true });
+
 export const SIGNALS: Record<string, Signal[]> = {
   cnc1: [rpm(7200), st(load(55), "bar", [0, 100]), counter("parts", "Parts today", 288, 7), word("alarm", "Alarm", "None", 0.93)],
   cnc2: [word("coolant", "Coolant", "Low", 0.96, true), rpm(6800), st(load(61), "bar", [0, 100]), counter("parts", "Parts today", 241, 9)],
   cnc3: [rpm(8000), load(42), counter("parts", "Parts today", 312, 6), word("alarm", "Alarm", "None", 0.88), level("feed", "Feed rate", "mm/min", 1250, 10, 0.93, { low: 0, high: 3000 })],
   cnc4: [rpm(6500), st(load(48), "bar", [0, 100]), counter("parts", "Parts today", 265, 8), word("alarm", "Alarm", "None", 0.94)],
-  saw: [st(level("blade", "Blade speed", "m/min", 62, 1, 0.95, { low: 20, high: 90 }), "dial", [0, 100]), st(counter("cuts", "Cut count", 540, 8, 0.97), "wheel"), gauge("hyd", "Hydraulic pressure", "bar", 40, 1, [0, 100], 0.94, { low: 25, high: 80 }), gauge("coolant", "Coolant pressure", "bar", 3, 0.1, [0, 6], 0.92, { low: 1.5, high: 5, pipe: "water" }), gauge("motor", "Gearbox oil temperature", "°C", 48, 1, [0, 120], 0.93, { high: 85 })],
-  wash: [st(level("tank", "Tank temperature", "°C", 58, 1, 0.96, { low: 40, high: 75 }), "dial", [0, 100]), st(level("tanklvl", "Tank level", "%", 72, 1, 0.93, { low: 30, high: 95 }), "level", [0, 100]), { ...word("state", "Cycle state", "Idle", 0.92), style: "lamps" }, st(counter("cycles", "Cycles today", 37, 400, 0.98), "wheel"), gauge("water", "Water pressure", "bar", 3.5, 0.1, [0, 6], 0.94, { low: 2, high: 5, pipe: "water" })],
-  press1: [st(counter("strokes", "Stroke count", 1904, 2, 0.97), "wheel"), st(level("tonnage", "Tonnage", "t", 142, 2, 0.95, { low: 0, high: 180 }), "dial", [0, 200]), st(level("die", "Die temperature", "°C", 64, 1, 0.94, { low: 20, high: 90 }), "seven"), open("valve", "Hydraulic valve", "Open")],
-  press2: [st(counter("strokes", "Stroke count", 1766, 2, 0.97), "wheel"), st(level("tonnage", "Tonnage", "t", 138, 2, 0.95, { low: 0, high: 180 }), "dial", [0, 200]), st(level("die", "Die temperature", "°C", 61, 1, 0.94, { low: 20, high: 90 }), "seven"), open("valve", "Hydraulic valve", "Open"), gauge("oilp", "Oil pressure", "bar", 150, 2, [0, 250], 0.95, { low: 100, high: 200 }), gauge("oilt", "Oil temperature", "°C", 46, 1, [0, 100], 0.93, { high: 70 })],
-  weld1: [st(level("current", "Weld current", "A", 185, 4, 0.95, { low: 0, high: 260 }), "seven"), st(level("arc", "Arc-on time", "%", 61, 1, 0.93), "level", [0, 100]), st(level("gas", "Gas flow", "l/min", 14, 1, 0.92, { low: 8, high: 25 }), "dial", [0, 30])],
-  weld2: [st({ id: "current", label: "Weld current", unit: "A", kind: "number", conf: 0.95, low: 0, high: 260, value: () => 0 }, "seven"), st(level("arc", "Arc-on time", "%", 38, 0, 0.93), "level", [0, 100]), st(level("gas", "Gas flow", "l/min", 0, 0, 0.92, { high: 25 }), "dial", [0, 30])],
+  saw: [st(level("blade", "Blade speed", "m/min", 62, 1, 0.95, { low: 20, high: 90 }), "seven"), st(counter("cuts", "Cut count", 540, 8, 0.97), "wheel")],
+  // The parts washer has no screen: a real tank-temperature gauge, a level sight glass, a lamp with a label and a mechanical counter.
+  wash: [phys(level("tank", "Tank temperature", "°C", 58, 1, 0.96, { low: 40, high: 75 }), "dial", [0, 100]), phys(level("tanklvl", "Tank level", "%", 72, 1, 0.93, { low: 30, high: 95 }), "level", [0, 100]), phys(word("state", "Cycle running", "Idle", 0.92), "lamps"), phys(counter("cycles", "Cycles today", 37, 400, 0.98), "wheel")],
+  press1: [st(counter("strokes", "Stroke count", 1904, 2, 0.97), "wheel"), st(level("tonnage", "Tonnage", "t", 142, 2, 0.95, { low: 0, high: 180 }), "bar", [0, 200]), st(level("die", "Die temperature", "°C", 64, 1, 0.94, { low: 20, high: 90 }), "seven"), open("valve", "Hydraulic valve", "Open")],
+  press2: [st(counter("strokes", "Stroke count", 1766, 2, 0.97), "wheel"), st(level("tonnage", "Tonnage", "t", 138, 2, 0.95, { low: 0, high: 180 }), "bar", [0, 200]), st(level("die", "Die temperature", "°C", 61, 1, 0.94, { low: 20, high: 90 }), "seven"), open("valve", "Hydraulic valve", "Open")],
+  weld1: [st(level("current", "Weld current", "A", 185, 4, 0.95, { low: 0, high: 260 }), "seven"), st(level("arc", "Arc-on time", "%", 61, 1, 0.93), "level", [0, 100]), st(level("gas", "Gas flow", "l/min", 14, 1, 0.92, { low: 8, high: 25 }), "level", [0, 30])],
+  weld2: [st({ id: "current", label: "Weld current", unit: "A", kind: "number", conf: 0.95, low: 0, high: 260, value: () => 0 }, "seven"), st(level("arc", "Arc-on time", "%", 38, 0, 0.93), "level", [0, 100]), st(level("gas", "Gas flow", "l/min", 0, 0, 0.92, { high: 25 }), "level", [0, 30])],
   robot: [{ ...word("state", "Program state", "Auto", 0.96), style: "lamps" }, st(counter("cycles", "Cycle count", 1120, 5, 0.97), "wheel"), word("fault", "Fault codes", "None", 0.9)],
+  // The one machine with round gauges: the utilities cabinet, with a gauge on each pipe.
   util: [gauge("water", "Water pressure", "bar", 4.2, 0.1, [0, 10], 0.96, { low: 2, high: 8, pipe: "water" }), gauge("oil", "Oil pressure", "bar", 6.1, 0.1, [0, 10], 0.95, { low: 3, high: 9, pipe: "oil" }), gauge("air", "Air pressure", "bar", 7, 0.1, [0, 12], 0.95, { low: 5, high: 10, pipe: "air" }), gauge("oilt", "Oil temperature", "°C", 48, 1, [0, 120], 0.94, { high: 90, pipe: "oil" })],
-  cmm: [st(counter("measured", "Parts measured", 96, 20, 0.98), "seven"), st(level("pass", "Pass rate", "%", 98, 0, 0.96, { low: 90, high: 100 }), "dial", [80, 100])],
+  cmm: [st(counter("measured", "Parts measured", 96, 20, 0.98), "seven"), st(level("pass", "Pass rate", "%", 98, 0, 0.96, { low: 90, high: 100 }), "bar", [80, 100])],
 };
 
 /** Signals drawn on the panel screen or plate, and gauges fitted on pipes. */
@@ -143,13 +148,14 @@ export interface Camera {
   /** Chip temperature, °C. */
   temp: number;
 }
-const PICS: Record<string, PicMode> = { saw: "off", cmm: "off", wash: "unsure", weld2: "unsure" };
+/** Most cameras send no picture: they read the screen themselves. A few are set to send one, so there is something to look at. */
+const PICS: Record<string, PicMode> = { cnc1: "10min", cnc2: "10min", robot: "10min", util: "10min", weld2: "unsure" };
 export function cameras(w: World): Camera[] {
   return MACHINES.filter((m) => m.id !== "cnc3" || w.cam3).map((m, i) => ({
     id: `cam-${m.id}`,
     name: `${m.id === "cmm" ? "CMM" : m.name} camera`,
     machineId: m.id,
-    pics: m.id === "cnc3" ? w.pics3 : PICS[m.id] ?? "10min",
+    pics: m.id === "cnc3" ? w.pics3 : PICS[m.id] ?? "off",
     fw: "0.9.4",
     rssi: -52 - ((i * 7) % 18),
     temp: 44 + ((i * 5) % 14),

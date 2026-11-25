@@ -7,7 +7,7 @@ import { SITE } from "./data";
 import { PulseCtx } from "./components/Btn";
 import { MockApp, ChatCtx } from "./app/MockApp";
 import { useChatState } from "./app/Chat";
-import { Closing, RehearsalIntro } from "./steps/Transition";
+import { Closing } from "./steps/Transition";
 
 function useMedia(q: string) {
   const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
@@ -125,7 +125,7 @@ function Demo() {
           {/* Presenter notes (desktop) */}
           <aside className={`hidden min-h-0 flex-col ${wide ? "" : "lg:flex"}`}>
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-[16px] border border-border bg-bg p-5">
-              <div className="text-xs font-semibold uppercase tracking-wide text-faint">Step {step} of {STEPS.length}{step >= 5 ? " · dress rehearsal" : ""}</div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-faint">Step {step} of {STEPS.length}</div>
               <h1 className="font-display mt-1 text-[26px] leading-tight">{def.title}</h1>
               <ol className="mt-4 space-y-1.5">
                 {def.stages.filter((x) => !x.interstitial).map((x, i) => (
@@ -152,7 +152,7 @@ function Demo() {
           </aside>
 
           {inter ? (
-            <section className="min-h-0 flex-1" aria-label={st.name}>{step === STEPS.length ? <Closing /> : <RehearsalIntro />}</section>
+            <section className="min-h-0 flex-1" aria-label={st.name}><Closing /></section>
           ) : (
             <section className="relative min-h-0 flex-1 overflow-hidden bg-bg lg:rounded-[16px] lg:border lg:border-border" aria-label="App screen">
               <MockApp key={`${step}.${stage}`} view={st.view} tick={tick} next={next} />

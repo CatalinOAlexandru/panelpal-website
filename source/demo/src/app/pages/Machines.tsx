@@ -3,7 +3,7 @@ import { A, useNav } from "../nav";
 import { useApp } from "../ctx";
 import { Button, Card, CardHead, Dialog, Empty, Field, Input, MACHINE_PILL, MachinePill, Note, PageHeader, Select, Seg, Textarea, Cta, type MachineStatus } from "../ui";
 import { ALERTS, PIC_WORDS, panelSignals, fmt, history, machineView, machineViews, type MachineView, type PicMode } from "../world";
-import { Feed, FlatScreen } from "../feed/Feed";
+import { FlatScreen } from "../feed/Feed";
 import { typeName } from "../../components/floor/parts";
 import { SignalTile, SendingOptions } from "../Tiles";
 import { LineChart } from "../Chart";
@@ -53,12 +53,8 @@ function MachineCard({ m }: { m: MachineView }) {
   const { tick, cta, guided } = useApp();
   const { go } = useNav();
   const inactive = m.status === "uncalibrated";
-  const showPic = m.camera && m.camera.pics !== "off" && !inactive;
   return (
     <Card className={`flex flex-col overflow-hidden ${inactive ? "border-dashed bg-surface-2" : ""} ${m.status === "alarm" ? "border-fault-dot" : ""}`}>
-      {!inactive && (showPic
-        ? <Feed id={m.id} tick={tick} running={m.status !== "idle"} className="!aspect-video"><span className="absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-cam-scrim/85 px-2 py-0.5 text-[11px] font-semibold text-white"><span className="pp-pulse h-1.5 w-1.5 rounded-full bg-cam-live" />LIVE</span></Feed>
-        : <div className="grid aspect-video place-items-center border-b border-border bg-surface-2 px-4 text-center text-[13px] text-muted">The camera sends readings only.<br />No picture is sent to PanelPal.</div>)}
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -124,7 +120,7 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
                 : <Cta pulse={cta === "pick-camera"} onClick={() => (cta === "pick-camera" ? guided("pick-camera") : setEditing(true))}>Pick a camera</Cta>}
             </div>
           </Card>
-          {m.camera ? <Feed id={id} tick={tick} className="rounded-[10px]"><span className="absolute left-2 top-2 rounded-full bg-cam-scrim/85 px-2 py-0.5 text-[11px] font-semibold text-white">Setup picture · {m.camera.id}</span></Feed> : <Empty title="No camera yet">The screen picture shows here once a camera is picked.</Empty>}
+          {m.camera ? <Card className="p-4"><h2 className="font-semibold">Camera set</h2><p className="mt-1 text-sm text-muted">PanelPal needs one setup picture from the camera. It shows on the calibrate page. After that the camera reads the values itself.</p></Card> : <Empty title="No camera yet">Pick the camera that sees this machine's screen.</Empty>}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
@@ -147,12 +143,6 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
               <Card>
                 <CardHead title="How this camera works" sub={m.camera.id} />
                 <div className="p-3"><SendingOptions value={mode} onChange={setPics} highlight={id === "cnc3" && world.pics3 === "off"} /></div>
-              </Card>
-            )}
-            {showPic && m.camera && (
-              <Card className="overflow-hidden">
-                <CardHead title="Camera picture" sub={mode === "off" ? "Requested just now. Not sent again." : `${PIC_WORDS[mode].label}. Updated 4 min ago`} />
-                <Feed id={id} tick={tick} running={m.status !== "idle"} fps={4}><span className="absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-cam-scrim/85 px-2 py-0.5 text-[11px] font-semibold text-white"><span className="pp-pulse h-1.5 w-1.5 rounded-full bg-cam-live" />LIVE · <span className="font-mono font-normal">{m.camera.id}</span></span></Feed>
               </Card>
             )}
           </div>
@@ -180,7 +170,7 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
   );
 }
 
-/** "Edit machine": pick the camera for CNC mill 3. In the rehearsal, Save moves the demo on. */
+/** "Edit machine": pick the camera for CNC mill 3. In the walkthrough, Save moves the demo on. */
 export function EditMachineDialog({ open, id, onClose, guidedSave }: { open: boolean; id: string; onClose: () => void; guidedSave?: boolean }) {
   const { world, guided } = useApp();
   const m = machineView(id, world);

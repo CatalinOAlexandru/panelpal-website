@@ -19,7 +19,7 @@ export function Feed({ id, tick, running = true, className = "", fps = 2, still 
     let alive = true, phase = still ? 0 : id.length, timer = 0;
     void import("./feedRenderer").then((m) => {
       if (!alive || !ref.current) return;
-      const frame = () => { if (!still) phase += 0.35; m.drawFeed(ref.current!, id, t.current, phase, run.current); };
+      const frame = () => { if (!ref.current) return; if (!still) phase += 0.35; m.drawFeed(ref.current, id, t.current, phase, run.current); };
       frame();
       timer = window.setInterval(frame, Math.round(1000 / fps));
     });

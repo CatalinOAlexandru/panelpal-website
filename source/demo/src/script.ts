@@ -1,10 +1,10 @@
-// The demo script. The app opens finished; steps 1 to 4 tour it, steps 5 and 6 are the dress rehearsal of setting up a camera and a machine.
+// The demo script. The app opens finished; steps 1 to 4 tour it, steps 5 and 6 set up a new camera and a machine.
 import type { View } from "./app/view";
 
 export interface Stage { name: string; say: string; autoMs?: number; interstitial?: boolean; view: View }
 export interface StepDef { n: number; key: string; title: string; short: string; stages: Stage[]; optional?: boolean }
 
-const live = { cnc3: "live" as const, cam3: true, pics3: "10min" as const };
+const live = { cnc3: "live" as const, cam3: true, pics3: "off" as const };
 const none = { cnc3: "none" as const, cam3: false, pics3: "off" as const };
 const camera = { cnc3: "none" as const, cam3: true, pics3: "off" as const };
 
@@ -15,9 +15,9 @@ export const STEPS: StepDef[] = [
     { name: "3D plan", view: { route: { page: "overview" }, plan: "3d", select: "cnc2", world: live },
       say: "The same floor in 3D. Drag to turn it. Status shows on each machine's light and floor ring. CNC mill 2 is in alarm: tap it to open it." },
   ] },
-  { n: 2, key: "machines", title: "Machines and camera feeds", short: "Machines", stages: [
+  { n: 2, key: "machines", title: "Machines", short: "Machines", stages: [
     { name: "All machines", view: { route: { page: "machines" }, world: live },
-      say: "Every machine has a card: its camera picture, its status and the values the camera reads. Some cameras send a picture; others send readings only. Pictures are optional." },
+      say: "Every machine has a card with its status and the values its camera reads. The camera does the reading itself and sends the values." },
     { name: "One machine", view: { route: { page: "machines", id: "cnc1" }, world: live },
       say: "One machine in full. The camera finds the screen and boxes each value, with a confidence score. Below: the value over time, alert rules, and how this camera works. The camera does the reading itself." },
   ] },
@@ -33,11 +33,9 @@ export const STEPS: StepDef[] = [
     { name: "Pick a question", view: { route: { page: "panelai" }, cta: "ask-downtime", chat: "fresh", world: live },
       say: "Three questions are ready. The first is the complex one: downtime, per area and per machine. Tap it." },
     { name: "The answer", view: { route: { page: "panelai" }, chat: "downtime", world: live },
-      say: "PanelAI answers in plain words, with a table. Under the answer, “How I got this” lists the read-only queries it used. In this demo the answers were written in advance, so nothing runs on the web server." },
-    { name: "Dress rehearsal next", interstitial: true, view: { route: { page: "overview" }, world: live },
-      say: "That was the finished product. Now the dress rehearsal: connect a camera, add it to a machine, and see it go live." },
+      say: "PanelAI answers in plain words, with a table. Under the answer, “How I got this” lists the read-only queries it used. In this demo the answers were written in advance, so nothing runs on the web server. Next: add a new camera." },
   ] },
-  { n: 5, key: "camera", title: "Dress rehearsal: connect a camera", short: "Camera", stages: [
+  { n: 5, key: "camera", title: "Add a new camera", short: "Camera", stages: [
     { name: "Cameras", view: { route: { page: "cameras" }, cta: "connect-camera", world: none },
       say: "CNC mill 3 has no camera yet. The other 12 machines do. Choose Connect camera." },
     { name: "Name and board", view: { route: { page: "cameras" }, connect: "start", cta: "connect-board", world: none },
@@ -53,7 +51,7 @@ export const STEPS: StepDef[] = [
     { name: "It reads on the camera", view: { route: { page: "cameras" }, connect: "reading", cta: "finish-camera", world: camera },
       say: "The camera does the reading itself and sends only the values. Sending pictures to PanelPal is optional: it is off here, and you can turn it on later. Press Done." },
   ] },
-  { n: 6, key: "machine", title: "Dress rehearsal: add the machine", short: "Machine", stages: [
+  { n: 6, key: "machine", title: "Add the machine", short: "Machine", stages: [
     { name: "Machines", view: { route: { page: "machines" }, cta: "setup-cnc3", world: camera },
       say: "The camera now shows on the Cameras page. CNC mill 3 is still not set up. Choose Set up on its card." },
     { name: "Pick the camera", view: { route: { page: "machines", id: "cnc3" }, cta: "pick-camera", world: camera },

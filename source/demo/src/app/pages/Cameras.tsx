@@ -18,6 +18,13 @@ export function CamerasPage({ dialog }: { dialog?: ConnectPhase }) {
       <PageHeader title="Cameras" sub={`${cams.length} of ${cams.length} cameras online`}
         actions={<><Button disabled title="Not available in this demo"><PlusIc /> Add camera</Button>
           <Cta pulse={cta === "connect-camera"} onClick={() => (cta === "connect-camera" ? guided("connect-camera") : setOpen(true))}><PlusIc /> Connect camera</Cta></>} />
+      <div className="pp-optional mb-5 rounded-[10px] border border-accent bg-accent-soft p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-white">Optional</span>
+          <h2 className="text-[15px] font-semibold">Sending pictures to PanelPal is optional</h2>
+        </div>
+        <p className="mt-1.5 text-sm text-text">Each camera reads its machine screen itself and sends only the values. In the real app a camera usually sends no picture unless you ask for one. Most cards below show "No picture sent", and you can request one picture when you want to look. A few are set to send a picture so you can see what a camera sees.</p>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{cams.map((c) => <CameraCard key={c.id} c={c} fresh={c.machineId === "cnc3" && world.cnc3 === "none"} />)}</div>
       {isOpen && <ConnectDialog phase={dialog ?? "start"} onClose={() => setOpen(false)} />}
     </>
@@ -48,7 +55,7 @@ function CameraCard({ c, fresh }: { c: Camera; fresh: boolean }) {
           <div className="min-w-0"><div className="truncate font-semibold">{c.name}</div><div className="text-[13px] text-muted">PanelPal camera</div></div>
           <div className="shrink-0"><CameraPill status="online" /></div>
         </div>
-        <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[13px] sm:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[13px]">
           <div><dt className="text-faint">Reads on</dt><dd className="font-medium">The camera</dd></div>
           <div><dt className="text-faint">Sends</dt><dd className="font-medium">{PIC_WORDS[pics].short}</dd></div>
           <div><dt className="text-faint">Last seen</dt><dd className="tnum font-medium">Now</dd></div>

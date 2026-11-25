@@ -142,14 +142,86 @@ export function drawGaugeFace(c: CanvasRenderingContext2D, cx: number, cy: numbe
 /** Where gauge i of 4 sits when a machine has gauges and no screen (the flat gauge board). Fractions of the picture. */
 export const boardBox = (i: number): Box => ([[0.03, 0.03, 0.45, 0.45], [0.52, 0.03, 0.45, 0.45], [0.03, 0.52, 0.45, 0.45], [0.52, 0.52, 0.45, 0.45]] as Box[])[i] ?? [0, 0, 0.1, 0.1];
 
-/** The gauges of a machine with no screen, side by side on their pipes, flat. */
+/* ------------------------------ analogue instruments (no screen) ------------------------------ */
+
+/** A vertical sight glass: a tube with liquid in it and a scale. Fills the box (w x h). */
+export function drawSightGlass(c: CanvasRenderingContext2D, w: number, h: number, s: Signal, v: number) {
+  const [lo, hi] = s.range ?? [0, 100], f = Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+  c.fillStyle = "#e4e6e2"; c.fillRect(0, 0, w, h);
+  c.strokeStyle = "#7b8187"; c.lineWidth = 4; c.strokeRect(2, 2, w - 4, h - 4);
+  const tx = w * 0.5 - w * 0.09, tw = w * 0.18, ty = h * 0.08, th = h * 0.84;
+  c.fillStyle = "#f6f8f9"; c.fillRect(tx, ty, tw, th);
+  const bad = (s.high != null && v > s.high) || (s.low != null && v < s.low);
+  c.fillStyle = bad ? "#d03b3b" : "#2f7fd0"; c.fillRect(tx, ty + th * (1 - f), tw, th * f);
+  c.fillStyle = "rgba(255,255,255,0.45)"; c.fillRect(tx + tw * 0.15, ty, tw * 0.15, th);
+  c.strokeStyle = "#3a3f45"; c.lineWidth = 2; c.strokeRect(tx, ty, tw, th);
+  c.fillStyle = "#161616"; c.font = `500 ${Math.round(h * 0.07)}px Inter, sans-serif`; c.textBaseline = "middle";
+  for (let k = 0; k <= 4; k++) {
+    const yy = ty + th * (1 - k / 4);
+    c.beginPath(); c.moveTo(tx + tw, yy); c.lineTo(tx + tw + w * 0.1, yy); c.stroke();
+    c.textAlign = "left"; c.fillText(fnum(lo + ((hi - lo) * k) / 4), tx + tw + w * 0.13, yy);
+  }
+  c.textAlign = "center"; c.textBaseline = "alphabetic"; c.fillText(`${s.unit}`, w * 0.2, h * 0.5);
+}
+
+/** A panel lamp with an engraved label. The lamp is lit when the word is anything but "Idle". */
+export function drawLampLabel(c: CanvasRenderingContext2D, w: number, h: number, s: Signal, v: string | number) {
+  const t = String(v).toLowerCase(), lit = !/idle|off|stop/.test(t), col = /fault|alarm|low/.test(t) ? "#d03b3b" : /auto|run/.test(t) ? "#2fd05a" : "#f2b233";
+  c.fillStyle = "#2b3036"; c.fillRect(0, 0, w, h);
+  c.strokeStyle = "#7b8187"; c.lineWidth = 4; c.strokeRect(2, 2, w - 4, h - 4);
+  const r = h * 0.3, cx = h * 0.55, cy = h / 2;
+  c.fillStyle = "#15181b"; c.beginPath(); c.arc(cx, cy, r + 5, 0, 7); c.fill();
+  if (lit) { const g = c.createRadialGradient(cx, cy, r * 0.2, cx, cy, r * 1.9); g.addColorStop(0, col + "aa"); g.addColorStop(1, col + "00"); c.fillStyle = g; c.beginPath(); c.arc(cx, cy, r * 1.9, 0, 7); c.fill(); }
+  c.fillStyle = lit ? col : "#4a3f3f"; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.35)"; c.beginPath(); c.arc(cx - r * 0.3, cy - r * 0.3, r * 0.25, 0, 7); c.fill();
+  c.fillStyle = "#e8e8e4"; c.font = `600 ${Math.round(h * 0.3)}px Inter, sans-serif`; c.textAlign = "left"; c.textBaseline = "middle";
+  c.fillText(s.label.toUpperCase(), h * 1.05, cy);
+}
+
+/** A mechanical counter: white digits on black drums in a brass frame. */
+export function drawCounter(c: CanvasRenderingContext2D, w: number, h: number, s: Signal, v: number) {
+  const n = 5, ds = String(Math.round(v)).padStart(n, "0").slice(-n);
+  c.fillStyle = "#e4e6e2"; c.fillRect(0, 0, w, h);
+  c.strokeStyle = "#7b8187"; c.lineWidth = 4; c.strokeRect(2, 2, w - 4, h - 4);
+  const dw = Math.min(w * 0.14, (w - 24) / n - 4), dh = h * 0.5, x0 = (w - n * (dw + 4)) / 2, y0 = h * 0.38;
+  c.fillStyle = "#b08a3a"; c.fillRect(x0 - 6, y0 - 6, n * (dw + 4) + 8, dh + 12);
+  for (let i = 0; i < n; i++) {
+    c.fillStyle = "#15181b"; c.fillRect(x0 + i * (dw + 4), y0, dw, dh);
+    c.fillStyle = "#f4f4f0"; c.font = `600 ${dh * 0.8}px 'JetBrains Mono', monospace`; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(ds[i], x0 + i * (dw + 4) + dw / 2, y0 + dh / 2 + 2);
+  }
+  c.fillStyle = "#161616"; c.font = `600 ${Math.round(h * 0.2)}px Inter, sans-serif`; c.textAlign = "center"; c.textBaseline = "alphabetic"; c.fillText(s.label.toUpperCase(), w / 2, h * 0.24);
+}
+
+/** A round gauge fixed straight to a plate (no pipe), filling the box. */
+export function drawPlateGauge(c: CanvasRenderingContext2D, w: number, h: number, s: Signal, v: number) {
+  c.fillStyle = "#e4e6e2"; c.fillRect(0, 0, w, h);
+  drawGaugeFace(c, w / 2, h / 2, Math.min(w, h) / 2 - 3, s, v);
+}
+
+/** Size of the picture of each kind of instrument, for the 3D feed (the plane has this aspect). */
+export const instrumentSize = (s: Signal): [number, number] => (s.style === "level" ? [150, 320] : s.style === "dial" ? [256, 256] : [320, 112]);
+export function drawInstrument2D(c: CanvasRenderingContext2D, s: Signal, v: number | string, w: number, h: number) {
+  if (s.style === "level") drawSightGlass(c, w, h, s, Number(v));
+  else if (s.style === "lamps") drawLampLabel(c, w, h, s, v);
+  else if (s.style === "wheel") drawCounter(c, w, h, s, Number(v));
+  else drawPlateGauge(c, w, h, s, Number(v));
+}
+
+/** The instruments of a machine with no screen, side by side, flat. A gauge with a pipe is drawn on its pipe; the others on a plate. */
 export function drawGaugeBoard(ctx: CanvasRenderingContext2D, title: string, sigs: Signal[], values: (number | string)[]) {
   const W = HMI_W, H = HMI_H;
   ctx.fillStyle = "#c9cdc7"; ctx.fillRect(0, 0, W, H);
   sigs.forEach((s, i) => {
     const [fx, fy, fw, fh] = boardBox(i), x = fx * W, y = fy * H, w = fw * W, h = fh * H;
+    if (!s.pipe) { // fixed to a plate
+      ctx.save(); ctx.translate(x, y);
+      const [iw, ih] = instrumentSize(s), k = Math.min(w / iw, h / ih), cw = Math.round(iw * k), ch = Math.round(ih * k);
+      ctx.translate((w - cw) / 2, (h - ch) / 2); ctx.beginPath(); ctx.rect(0, 0, cw, ch); ctx.clip();
+      drawInstrument2D(ctx, s, values[i], cw, ch); ctx.restore();
+      return;
+    }
     const R = Math.min(w * 0.5, h * 0.42), cx = x + w / 2, cy = y + R + 2, py = y + h - 16;
-    ctx.fillStyle = MEDIUM[s.pipe ?? "oil"]; ctx.fillRect(x, py, w, 16);
+    ctx.fillStyle = MEDIUM[s.pipe]; ctx.fillRect(x, py, w, 16);
     ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.fillRect(x, py + 2, w, 3);
     ctx.fillStyle = "#6b7078"; ctx.fillRect(x + 8, py - 3, 6, 22); ctx.fillRect(x + w - 14, py - 3, 6, 22);
     ctx.fillStyle = "#b08a3a"; ctx.fillRect(cx - 6, cy + R * 0.95, 12, py - (cy + R * 0.95)); // brass stem
