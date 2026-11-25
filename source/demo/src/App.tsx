@@ -8,6 +8,7 @@ import { PulseCtx } from "./components/Btn";
 import { MockApp, ChatCtx } from "./app/MockApp";
 import { useChatState } from "./app/Chat";
 import { Closing, SITE_HOME } from "./steps/Transition";
+import { Intro } from "./steps/Intro";
 
 function useMedia(q: string) {
   const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
@@ -24,7 +25,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/step/:n/:s?" element={<Demo />} />
-      <Route path="*" element={<Navigate to="/step/1" replace />} />
+      <Route path="/" element={<Intro />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

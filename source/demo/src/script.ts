@@ -9,7 +9,7 @@ const none = { cnc3: "none" as const, cam3: false, pics3: "off" as const };
 const camera = { cnc3: "none" as const, cam3: true, pics3: "off" as const };
 
 export const STEPS: StepDef[] = [
-  { n: 1, key: "overview", title: "The finished site", short: "Overview", stages: [
+  { n: 1, key: "overview", title: "Overview page", short: "Overview", stages: [
     { name: "2D plan", view: { route: { page: "overview" }, plan: "2d", world: live },
       say: "This is PanelPal when it is set up: one factory, 13 machines, all live. The plan shows each machine's status in colour. Tap a machine to see its readings. Alerts and every machine are listed on the right." },
     { name: "3D plan", view: { route: { page: "overview" }, plan: "3d", select: "cnc2", world: live },
