@@ -6,7 +6,7 @@ import { Btn } from "../Btn";
 import type { PlanMachine, PlanMode } from "./model";
 
 const TYPE_NAME: Record<string, string> = { "cnc-mill": "CNC mill", "cnc-lathe": "CNC lathe", welder: "MIG welder", press: "Press", bandsaw: "Band saw", washer: "Parts washer", cmm: "Measuring machine", "robot-cell": "Robot cell", conveyor: "Conveyor", compressor: "Compressor" };
-export const typeName = (t: string) => TYPE_NAME[t] ?? t;
+export const typeName = (t: string, id?: string) => (id === "util" ? "Utilities cabinet" : TYPE_NAME[t] ?? t);
 
 export function StatusChip({ status, small }: { status: DashStatus; small?: boolean }) {
   const s = STATUS[status];
@@ -23,7 +23,7 @@ export function MachineTip({ m }: { m: PlanMachine }) {
   return (
     <div className="pointer-events-none w-max max-w-[210px] rounded-[10px] border bg-bg px-2.5 py-2 text-left text-xs shadow-raised" style={{ borderColor: LABEL.chip.border, fontFamily: LABEL.fontSans }} role="tooltip">
       <div className="flex items-center gap-2"><b className="text-[13px] font-semibold text-text">{m.label}</b>{m.status && <StatusChip status={m.status} small />}</div>
-      <div className="text-muted">{m.area} · {typeName(m.type)}</div>
+      <div className="text-muted">{m.area} · {typeName(m.type, m.id)}</div>
       {m.status && m.status !== "notSetUp" ? (
         <div className="mt-1 grid grid-cols-[auto_auto] gap-x-3 tnum">
           <span className="text-muted">{m.primary.label}</span><b className="font-semibold text-text">{m.primary.value}</b>
@@ -85,7 +85,7 @@ export function MachineDetail({ m, onClose, onAddDevice, onOpen, footer }: {
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <div className="text-[15px] font-semibold leading-tight">{m.name}</div>
-          <div className="text-xs text-muted">{m.area} · {typeName(m.type)}</div>
+          <div className="text-xs text-muted">{m.area} · {typeName(m.type, m.id)}</div>
         </div>
         {m.status && <StatusChip status={m.status} />}
         {onClose && <button type="button" onClick={onClose} aria-label="Close details" className="-mr-1 -mt-1 grid h-7 w-7 place-items-center rounded-full text-muted hover:bg-surface-2">✕</button>}
@@ -108,10 +108,9 @@ export function MachineDetail({ m, onClose, onAddDevice, onOpen, footer }: {
               </div>
             ))}
           </div>
-          <div className="mt-2.5"><div className="h-1 overflow-hidden rounded bg-surface-3"><b className="block h-full bg-accent" style={{ width: `${m.utilisation}%` }} /></div><div className="mt-1 text-[11px] text-muted">Utilisation today {m.utilisation}% · example data</div></div>
+          {m.id !== "util" && <div className="mt-2.5"><div className="h-1 overflow-hidden rounded bg-surface-3"><b className="block h-full bg-accent" style={{ width: `${m.utilisation}%` }} /></div><div className="mt-1 text-[11px] text-muted">Utilisation today {m.utilisation}% · example data</div></div>}
           <Btn variant="primary" size="block" className="mt-3" disabled={!onOpen} onClick={onOpen}>Open machine</Btn>
-          {!onOpen && <p className="mt-1 text-center text-[11px] text-muted">In this demo only CNC mill 3 has a machine page.</p>}
-        </>
+                  </>
       )}
       {footer}
     </div>

@@ -54,3 +54,15 @@
   .guide-pulse:not([aria-disabled="true"]):not(:disabled):not(:hover):not(:focus-visible):not(:active) { animation: none; box-shadow: 0 0 0 2px #fff, 0 0 0 5px #1a8cff, 0 0 14px 4px rgba(26, 140, 255, 0.6); }
 }
 
+
+/* ---- Mock app (ported from the PanelPal web app) ---- */
+.pp-input { width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); background: var(--color-surface); padding: 8px 10px; font-size: 15px; line-height: 1.3; color: var(--color-text); }
+.pp-input:focus { outline: 2px solid var(--color-focus); outline-offset: 1px; }
+.pp-input:disabled { background: var(--color-surface-2); color: var(--color-muted); }
+select.pp-input { appearance: auto; }
+@keyframes pp-spin { to { transform: rotate(360deg); } }
+.pp-spin { animation: pp-spin 0.9s linear infinite; }
+@keyframes pp-bar { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+.pp-bar { animation: pp-bar 1.4s ease-in-out infinite; }
+/* Optional-setting highlight: a steady blue ring (not a pulse), so the page stays calm. */
+.pp-optional { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-accent); }

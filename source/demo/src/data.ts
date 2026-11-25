@@ -46,6 +46,7 @@ const ROWS: Row[] = [
   { id: "weld1", name: "Welder 1", short: "Weld 1", reads: ["Weld current", "Arc-on time"], primary: { label: "Current", value: "185 A" }, secondary: { label: "Arc-on", value: "61 %" }, status: "running", utilisation: 73 },
   { id: "weld2", name: "Welder 2", short: "Weld 2", reads: ["Weld current", "Arc-on time"], primary: { label: "Current", value: "0 A" }, secondary: { label: "Arc-on", value: "38 %" }, status: "idle", utilisation: 52 },
   { id: "robot", name: "Robot cell", short: "Robot", reads: ["Program state", "Cycle count", "Fault codes"], primary: { label: "Cycles", value: "1,120" }, secondary: { label: "State", value: "Auto" }, status: "running", utilisation: 88 },
+  { id: "util", name: "Utilities cabinet 1", short: "Utilities", reads: ["Water pressure", "Oil pressure", "Air pressure", "Oil temperature"], primary: { label: "Water", value: "4.2 bar" }, secondary: { label: "Oil", value: "6.1 bar" }, status: "running", utilisation: 0 },
   { id: "cmm", name: "Measuring machine (CMM)", short: "CMM", reads: ["Parts measured", "Pass / fail"], primary: { label: "Measured", value: "96" }, secondary: { label: "Pass", value: "98 %" }, status: "running", utilisation: 58 },
 ];
 
