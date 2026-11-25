@@ -36,6 +36,21 @@ export function Feed({ id, tick, running = true, className = "", fps = 2, still 
 
 const confColor = (c: number) => (c >= 0.9 ? "var(--color-cam-high)" : c >= 0.7 ? "var(--color-cam-mid)" : "var(--color-cam-low)");
 
+/** Counts web-font loads, so a canvas drawn before its fonts arrived draws again (the still hero screenshot has no clock to redraw it). */
+function useFontLoads() {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const fonts = typeof document !== "undefined" ? document.fonts : undefined;
+    if (!fonts) return;
+    let live = true;
+    const on = () => live && setN((x) => x + 1);
+    fonts.addEventListener("loadingdone", on);
+    void fonts.ready.then(on);
+    return () => { live = false; fonts.removeEventListener("loadingdone", on); };
+  }, []);
+  return n;
+}
+
 /** The flattened screen of a machine with the value boxes on it (the "Screen" card). `boxes` can be limited while the AI maps. */
 export function FlatScreen({ id, tick, boxes = true, count, conf, className = "" }: { id: string; tick: number; boxes?: boolean; count?: number; conf?: Record<string, number>; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -43,13 +58,14 @@ export function FlatScreen({ id, tick, boxes = true, count, conf, className = ""
   // a machine with no screen (the utilities cabinet) shows its gauges side by side
   const sigs = panel.length ? panel : SIGNALS[id];
   const board = panel.length === 0;
+  const fontLoads = useFontLoads();
   useEffect(() => {
     const c = ref.current; if (!c) return;
     const m = MACHINES.find((x) => x.id === id)!;
     const vals = sigs.map((s) => s.value(tick));
     if (board) drawGaugeBoard(c.getContext("2d")!, hmiTitle(id), sigs, vals);
     else drawHmi(c.getContext("2d")!, hmiTitle(id), sigs, vals, clock(tick, true), m.status !== "idle", isPlate(id));
-  }, [id, tick, sigs, board]);
+  }, [id, tick, sigs, board, fontLoads]);
   const n = count ?? sigs.length;
   return (
     <div className={`relative w-full overflow-hidden rounded-[10px] bg-[#0e1620] ${className}`} style={{ aspectRatio: `${HMI_W} / ${HMI_H}` }}>
