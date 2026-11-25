@@ -16,18 +16,20 @@ export function useChatState(): ChatApi {
   const [open, setOpen] = useState(false);
   const seq = useRef(0);
   const timer = useRef(0);
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const busyRef = useRef(false); // set at once, so a repeated call (React strict mode runs effects twice) cannot ask the same question twice
   const reply = useCallback((q: string, a: Answer | null, ms: number) => {
+    busyRef.current = true;
     setMessages((m) => [...m, { id: ++seq.current, role: "user", text: q }]);
     setBusy(true);
     timer.current = window.setTimeout(() => {
+      busyRef.current = false;
       setBusy(false);
       setMessages((m) => [...m, { id: ++seq.current, role: "assistant", text: a ? a.text : FREE_TEXT_REPLY, answer: a ?? undefined }]);
     }, ms);
   }, []);
-  const ask = useCallback((id: string) => { if (busy) return; const a = ANSWERS[id]; reply(PROMPTS.find((p) => p.id === id)!.text, a, 1500); }, [busy, reply]);
-  const say = useCallback((q: string) => { if (busy) return; const hit = PROMPTS.find((p) => p.text.toLowerCase() === q.trim().toLowerCase()); hit ? ask(hit.id) : reply(q, null, 700); }, [busy, ask, reply]);
-  const clear = useCallback(() => setMessages([]), []);
+  const ask = useCallback((id: string) => { if (busyRef.current) return; const a = ANSWERS[id]; reply(PROMPTS.find((p) => p.id === id)!.text, a, 1500); }, [reply]);
+  const say = useCallback((q: string) => { if (busyRef.current) return; const hit = PROMPTS.find((p) => p.text.toLowerCase() === q.trim().toLowerCase()); hit ? ask(hit.id) : reply(q, null, 700); }, [ask, reply]);
+  const clear = useCallback(() => { busyRef.current = false; window.clearTimeout(timer.current); setBusy(false); setMessages([]); }, []);
   return useMemo(() => ({ messages, busy, open, setOpen, ask, say, clear }), [messages, busy, open, ask, say, clear]);
 }
 

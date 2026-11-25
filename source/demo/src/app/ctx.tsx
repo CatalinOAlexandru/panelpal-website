@@ -10,6 +10,8 @@ export interface AppApi {
   /** Press the guided button: moves the demo on if `name` is the expected one. */
   guided: (name: string) => void;
   next: () => void;
+  /** Jump to a step and a stage (stage counted from 0). */
+  go: (step: number, stage?: number) => void;
 }
 export const AppCtx = createContext<AppApi>(null as unknown as AppApi);
 export const useApp = () => useContext(AppCtx);

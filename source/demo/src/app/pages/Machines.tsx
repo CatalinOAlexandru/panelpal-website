@@ -87,6 +87,8 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
   const m = machineView(id, world);
   const [selId, setSelId] = useState(m.signals[0].id);
   const [editing, setEditing] = useState(!!editingStage);
+  const [calOpen, setCalOpen] = useState(true);
+  const askCal = !!m.camera && m.status === "uncalibrated" && cta === "calibrate-yes";
   const [win, setWin] = useState<"15m" | "1h">("1h");
   const [asked, setAsked] = useState(false);
   const [pics, setPics] = useState<PicMode | null>(null);
@@ -104,7 +106,7 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
         title={<span className="flex flex-wrap items-center gap-3">{m.name} <MachinePill status={m.status} /></span>}
         sub={<>{typeName(m.type, m.id)} · {m.area}{m.camera ? <> · camera <span className="font-mono">{m.camera.id}</span></> : " · no camera"}{live ? " · read 1 s ago" : ""}</>}
         actions={<>
-          <Cta pulse={cta === "calibrate"} variant={cta === "calibrate" ? "solid" : "primary"} disabled={!m.camera} onClick={() => (cta === "calibrate" ? guided("calibrate") : go({ page: "machines", id, sub: "calibrate" }))}>{live ? "Recalibrate" : "Calibrate"}</Cta>
+          <Button variant="primary" disabled={!m.camera} onClick={() => go({ page: "machines", id, sub: "calibrate" })}>{live ? "Recalibrate" : "Calibrate"}</Button>
           <Button onClick={() => setEditing(true)}>Edit</Button>
           <Button variant="ghost" className="text-fault hover:text-fault" disabled title="Not available in this demo">Delete</Button>
         </>} />
@@ -116,7 +118,7 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
             <p className="mt-1 text-sm text-muted">{m.camera ? "Tell PanelPal where the screen is and which values to read. The AI can do a first pass." : "Pick the camera that sees this machine's screen first."}</p>
             <div className="mt-3">
               {m.camera
-                ? <Cta pulse={cta === "calibrate"} onClick={() => (cta === "calibrate" ? guided("calibrate") : go({ page: "machines", id, sub: "calibrate" }))}>Calibrate now</Cta>
+                ? <Button variant="solid" onClick={() => go({ page: "machines", id, sub: "calibrate" })}>Calibrate now</Button>
                 : <Cta pulse={cta === "pick-camera"} onClick={() => (cta === "pick-camera" ? guided("pick-camera") : setEditing(true))}>Pick a camera</Cta>}
             </div>
           </Card>
@@ -165,6 +167,12 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
           </div>
         </div>
       )}
+      {/* After the camera is saved on the machine: offer to calibrate. Yes opens the calibrate page. */}
+      <Dialog open={askCal && calOpen} onClose={() => setCalOpen(false)} title="Calibrate your camera?"
+        footer={<><Button variant="ghost" onClick={() => setCalOpen(false)}>Not now</Button><Cta pulse={cta === "calibrate-yes"} onClick={() => (cta === "calibrate-yes" ? guided("calibrate-yes") : go({ page: "machines", id, sub: "calibrate" }))}>Yes</Cta></>}>
+        <p className="text-sm">Do you want to calibrate your camera now?</p>
+        <p className="mt-1 text-[13px] text-muted">PanelPal looks at the camera's setup picture to find the screen and the values to read.</p>
+      </Dialog>
       <EditMachineDialog open={editing} id={id} onClose={() => setEditing(false)} guidedSave={cta === "save-machine"} />
     </>
   );

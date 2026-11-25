@@ -17,12 +17,12 @@ import { Unavailable } from "./pages/Unavailable";
 export { ChatCtx };
 
 /** The PanelPal web app with example data. It shows what the current stage of the script says, and you can still click around in it. */
-export function MockApp({ view, tick, next }: { view: View; tick: number; next: () => void }) {
+export function MockApp({ view, tick, next, go }: { view: View; tick: number; next: () => void; go: (step: number, stage?: number) => void }) {
   const [route, setRoute] = useState<Route>(view.route);
   const chat = useChat();
   const world: World = useMemo(() => ({ ...FINISHED, ...view.world }), [view.world]);
   const cta = view.cta ?? null;
-  const api: AppApi = useMemo(() => ({ world, tick, cta, next, guided: (name) => { if (name === cta) next(); } }), [world, tick, cta, next]);
+  const api: AppApi = useMemo(() => ({ world, tick, cta, next, go, guided: (name) => { if (name === cta) next(); } }), [world, tick, cta, next, go]);
   const nav = useMemo(() => ({ route, go: setRoute }), [route]);
   const top = useRef<HTMLDivElement>(null);
 

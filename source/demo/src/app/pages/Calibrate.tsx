@@ -23,7 +23,9 @@ export function Calibrate({ id, phase }: { id: string; phase: CalPhase }) {
   }, [phase]);
   // a machine that is already set up (Recalibrate) starts with its corners on the screen; a new one starts with them in the middle
   const connected = m.status !== "uncalibrated";
-  const corners = phase === "corners" && !connected ? DEFAULT : found ?? DEFAULT;
+  // a new machine shows no corners until the AI has read the screen
+  const showCorners = connected || phase === "mapped" || phase === "tested";
+  const corners = found ?? DEFAULT;
   const flat = phase === "mapped" || phase === "tested" || (connected && phase !== "mapping");
   const conf = phase === "tested" ? TEST_CONF : undefined;
   return (
@@ -39,10 +41,10 @@ export function Calibrate({ id, phase }: { id: string; phase: CalPhase }) {
         <Card className="overflow-hidden">
           <CardHead title="1 · Camera picture" sub="The four corners of the screen" />
           <Feed id={id} tick={tick} still fps={1}>
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
+            {showCorners && <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pp-fade absolute inset-0 h-full w-full" aria-hidden>
               <polygon points={corners.map(([x, y]) => `${x * 100},${y * 100}`).join(" ")} fill="rgba(47,143,208,0.12)" stroke="var(--color-cam-box)" strokeWidth="0.5" vectorEffect="non-scaling-stroke" style={{ transition: "all .6s ease" }} />
-            </svg>
-            {corners.map(([x, y], i) => <span key={i} className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cam-box shadow" style={{ left: `${x * 100}%`, top: `${y * 100}%`, transition: "all .6s ease" }} />)}
+            </svg>}
+            {showCorners && corners.map(([x, y], i) => <span key={i} className="pp-fade absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cam-box shadow" style={{ left: `${x * 100}%`, top: `${y * 100}%`, transition: "all .6s ease" }} />)}
             {phase === "mapping" && <div className="absolute inset-0 grid place-items-center bg-black/40 text-white"><div className="flex items-center gap-2 rounded-full bg-black/70 px-4 py-2 text-sm"><Spinner className="h-4 w-4" /> The AI is reading the screen… {secs} s</div></div>}
           </Feed>
         </Card>

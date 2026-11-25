@@ -1,5 +1,6 @@
 import { useDemo } from "../demo";
 import { usePulse } from "../components/Btn";
+import { useNavigate } from "react-router-dom";
 import { Check, Chevron } from "../components/ui";
 
 /** Links are relative to the demo folder, so they work at a domain root (/demo/ -> /). "#join" is the site's "Book a demo" section. */
@@ -8,6 +9,7 @@ export const SITE_BOOK = "../#join";
 
 export function Closing() {
   const { go } = useDemo();
+  const nav = useNavigate();
   const hl = usePulse(true);
   return (
     <div className="no-scrollbar h-full overflow-y-auto bg-bg">
@@ -17,7 +19,8 @@ export function Closing() {
         <h1 className="font-display mt-2 text-[30px] leading-tight lg:text-[40px]">You’ve completed the PanelPal demo</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-muted">A whole site, then one machine set up from start to finish. The camera reads the screen that is already there, and sending pictures is your choice.</p>
         <div className="mt-6 flex w-full flex-col items-center gap-3 sm:w-auto">
-          <a href={SITE_BOOK} className={`btn-primary w-full sm:w-auto ${hl}`}>Book a demo with us <Chevron dir="right" /></a>
+          <button type="button" onClick={() => nav("/free")} className={`btn-primary w-full sm:w-auto ${hl}`}>Free roam the demo <Chevron dir="right" /></button>
+          <a href={SITE_BOOK} className="btn-secondary w-full sm:w-auto">Contact us <Chevron dir="right" /></a>
           <a href={SITE_HOME} className="text-sm font-semibold text-accent-strong underline underline-offset-4 hover:text-accent">Back to the PanelPal website</a>
           <button type="button" onClick={() => go(1)} className="mt-1 text-xs text-muted underline underline-offset-4 hover:text-text">Restart demo</button>
         </div>

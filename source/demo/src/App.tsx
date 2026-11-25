@@ -9,6 +9,7 @@ import { MockApp, ChatCtx } from "./app/MockApp";
 import { useChatState } from "./app/Chat";
 import { Closing, SITE_HOME } from "./steps/Transition";
 import { Intro } from "./steps/Intro";
+import { FreeRoam } from "./steps/FreeRoam";
 
 function useMedia(q: string) {
   const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
@@ -26,6 +27,7 @@ export default function App() {
     <Routes>
       <Route path="/step/:n/:s?" element={<Demo />} />
       <Route path="/" element={<Intro />} />
+      <Route path="/free" element={<FreeRoam />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -89,6 +91,8 @@ function Demo() {
   const nextPulse = ctas.length === 0 && !isLast && !loading;
   const isFirst = step === 1 && stage === 0;
   const st = def.stages[stage];
+  // the last stage before the closing page ends the demo
+  const nextLabel = step === STEPS.length && stage === def.stages.length - 2 ? "Complete demo" : "Next";
 
   return (
     <DemoCtx.Provider value={api}><PulseCtx.Provider value={pulseCtx}><ChatCtx.Provider value={chat}>
@@ -146,7 +150,7 @@ function Demo() {
               <div className="mt-auto pt-4">
                 <div className="flex gap-2">
                   <button onClick={back} disabled={isFirst} aria-disabled={isFirst || undefined} className="btn-secondary flex-1"><Chevron dir="left" /> Back</button>
-                  <button onClick={next} disabled={isLast} aria-disabled={isLast || undefined} className={`btn-primary flex-1 ${nextPulse && lg && !wide ? "guide-pulse" : ""}`}>Next <Chevron dir="right" /></button>
+                  <button onClick={next} disabled={isLast} aria-disabled={isLast || undefined} className={`btn-primary flex-1 ${nextPulse && lg && !wide ? "guide-pulse" : ""}`}>{nextLabel} <Chevron dir="right" /></button>
                 </div>
                 <p className="mt-2 text-center text-xs text-faint">Use the ← and → keys. All data is example data.</p>
               </div>
@@ -157,7 +161,7 @@ function Demo() {
             <section className="min-h-0 flex-1" aria-label={st.name}><Closing /></section>
           ) : (
             <section className="relative min-h-0 flex-1 overflow-hidden bg-bg lg:rounded-[16px] lg:border lg:border-border" aria-label="App screen">
-              <MockApp key={`${step}.${stage}`} view={st.view} tick={tick} next={next} />
+              <MockApp key={`${step}.${stage}`} view={st.view} tick={tick} next={next} go={go} />
             </section>
           )}
         </main>
@@ -173,7 +177,7 @@ function Demo() {
               ))}
             </div>
           </div>
-          <button onClick={next} disabled={isLast} aria-label="Next" aria-disabled={isLast || undefined} className={`btn-primary btn-icon ${nextPulse && !lg ? "guide-pulse" : ""}`}>Next <Chevron dir="right" /></button>
+          <button onClick={next} disabled={isLast} aria-label="Next" aria-disabled={isLast || undefined} className={`btn-primary btn-icon ${nextPulse && !lg ? "guide-pulse" : ""}`}>{nextLabel} <Chevron dir="right" /></button>
         </nav>
       </div>
     </ChatCtx.Provider></PulseCtx.Provider></DemoCtx.Provider>

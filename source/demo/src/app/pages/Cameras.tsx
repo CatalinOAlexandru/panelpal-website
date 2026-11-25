@@ -97,9 +97,10 @@ const Tick = ({ done, active, label }: { done: boolean; active?: boolean; label:
 );
 
 function ConnectDialog({ phase, onClose }: { phase: ConnectPhase; onClose: () => void }) {
-  const { cta, guided, tick } = useApp();
+  const { cta, guided, next, go, tick } = useApp();
   const [pics, setPics] = useState<PicMode>("off");
-  const footer = phase === "reading" ? <Cta pulse={cta === "finish-camera"} onClick={() => { guided("finish-camera"); onClose(); }}>Done</Cta> : undefined;
+  // Done closes the camera set-up. Set up machine goes straight on to adding the camera to CNC mill 3 (step 6, first stage: edit machine).
+  const footer = phase === "reading" ? <><Button variant="secondary" onClick={() => { onClose(); next(); }}>Done</Button><Cta pulse={cta === "setup-machine"} onClick={() => { if (cta === "setup-machine") go(6, 0); onClose(); }}>Set up machine</Cta></> : undefined;
   return (
     <>
       <Dialog open onClose={onClose} wide={phase === "reading"} title="Connect a PanelPal camera" footer={footer}>
