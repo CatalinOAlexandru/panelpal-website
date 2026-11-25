@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { A } from "../nav";
+import { useEffect, useRef, useState } from "react";
+import { A, useNav } from "../nav";
 import { useApp } from "../ctx";
 import { Button, Card, CameraPill, CloseIc, Dialog, Field, Input, Note, PageHeader, PasswordInput, PlusIc, Spinner, Cta } from "../ui";
 import { Feed } from "../feed/Feed";
@@ -12,12 +12,20 @@ export function CamerasPage({ dialog }: { dialog?: ConnectPhase }) {
   const { world, cta, guided } = useApp();
   const cams = cameras(world);
   const [open, setOpen] = useState(false);
-  const isOpen = open || !!dialog;
+  // closed: the presenter closed the stage's dialog. local: the dialog's own step, when it is not driven by the script (free roam, or after a step the script does not expect).
+  const [closed, setClosed] = useState(false);
+  const [local, setLocal] = useState<ConnectPhase | null>(null);
+  const isOpen = !closed && (open || !!dialog);
+  const phase = local ?? dialog ?? "start";
+  const own = local !== null || !dialog;
+  /** A button in the dialog: the script's guided button moves the demo on; otherwise the dialog moves to its next step itself. */
+  const advance = (name: string, to: ConnectPhase) => (cta === name ? guided(name) : setLocal(to));
+  const close = () => { setOpen(false); setClosed(true); setLocal(null); };
   return (
     <>
       <PageHeader title="Cameras" sub={`${cams.length} of ${cams.length} cameras online`}
         actions={<><Button disabled title="Not available in this demo"><PlusIc /> Add camera</Button>
-          <Cta pulse={cta === "connect-camera"} onClick={() => (cta === "connect-camera" ? guided("connect-camera") : setOpen(true))}><PlusIc /> Connect camera</Cta></>} />
+          <Cta pulse={cta === "connect-camera"} onClick={() => (cta === "connect-camera" ? guided("connect-camera") : (setClosed(false), setOpen(true)))}><PlusIc /> Connect camera</Cta></>} />
       <div className="pp-optional mb-5 rounded-[10px] border border-accent bg-accent-soft p-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-white">Optional</span>
@@ -26,7 +34,7 @@ export function CamerasPage({ dialog }: { dialog?: ConnectPhase }) {
         <p className="mt-1.5 text-sm text-text">Each camera reads its machine screen itself and sends only the values. In the real app a camera usually sends no picture unless you ask for one. Most cards below show "No picture sent", and you can request one picture when you want to look. A few are set to send a picture so you can see what a camera sees.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{cams.map((c) => <CameraCard key={c.id} c={c} fresh={c.machineId === "cnc3" && world.cnc3 === "none"} />)}</div>
-      {isOpen && <ConnectDialog phase={dialog ?? "start"} onClose={() => setOpen(false)} />}
+      {isOpen && <ConnectDialog phase={phase} own={own} advance={advance} setPhase={setLocal} onClose={close} />}
     </>
   );
 }
@@ -96,11 +104,13 @@ const Tick = ({ done, active, label }: { done: boolean; active?: boolean; label:
   </li>
 );
 
-function ConnectDialog({ phase, onClose }: { phase: ConnectPhase; onClose: () => void }) {
-  const { cta, guided, next, go, tick } = useApp();
+function ConnectDialog({ phase, own, advance, setPhase, onClose }: { phase: ConnectPhase; own: boolean; advance: (name: string, to: ConnectPhase) => void; setPhase: (p: ConnectPhase) => void; onClose: () => void }) {
+  const { cta, go, tick } = useApp();
+  const nav = useNav();
   const [pics, setPics] = useState<PicMode>("off");
-  // Done closes the camera set-up. Set up machine goes straight on to adding the camera to CNC mill 3 (step 6, first stage: edit machine).
-  const footer = phase === "reading" ? <><Button variant="secondary" onClick={() => { onClose(); next(); }}>Done</Button><Cta pulse={cta === "setup-machine"} onClick={() => { if (cta === "setup-machine") go(6, 0); onClose(); }}>Set up machine</Cta></> : undefined;
+  // Done closes the camera set-up (the new camera is then on the Cameras page). Set up machine goes on to adding the camera to
+  // CNC mill 3: in the walkthrough that is step 6, first stage (edit machine); elsewhere it opens the machine's page.
+  const footer = phase === "reading" ? <><Button variant="secondary" onClick={onClose}>Done</Button><Cta pulse={cta === "setup-machine"} onClick={() => { if (cta === "setup-machine") go(6, 0); else nav.go({ page: "machines", id: "cnc3" }); onClose(); }}>Set up machine</Cta></> : undefined;
   return (
     <>
       <Dialog open onClose={onClose} wide={phase === "reading"} title="Connect a PanelPal camera" footer={footer}>
@@ -113,11 +123,11 @@ function ConnectDialog({ phase, onClose }: { phase: ConnectPhase; onClose: () =>
                 <li>Plug the camera board into this computer with a USB data cable.</li>
                 <li>Select <b className="text-ink">Connect board</b>, then choose the board in the list your browser shows. PanelPal checks which camera it is.</li>
               </ol>
-              <Cta pulse={cta === "connect-board"} variant="primary" onClick={() => guided("connect-board")}>Connect board</Cta>
+              <Cta pulse={cta === "connect-board"} variant="primary" onClick={() => advance("connect-board", "usb")}>Connect board</Cta>
               <Note>Nothing shows in the list? Try another cable (some only charge) or USB port.</Note>
             </>
           )}
-          {phase === "install" && <Install key="install" />}
+          {phase === "install" && <Install key="install" onDone={own ? () => setPhase("wifi") : undefined} />}
           {phase === "wifi" && (
             <>
               <fieldset>
@@ -131,10 +141,10 @@ function ConnectDialog({ phase, onClose }: { phase: ConnectPhase; onClose: () =>
                 </div>
               </fieldset>
               <Field label="Wi-Fi password" hint="Sent only to the board, over the USB cable. PanelPal's server never sees it."><PasswordInput defaultValue="example-password" /></Field>
-              <Cta pulse={cta === "wifi-connect"} onClick={() => guided("wifi-connect")}>Connect camera to Wi-Fi</Cta>
+              <Cta pulse={cta === "wifi-connect"} onClick={() => advance("wifi-connect", "live")}>Connect camera to Wi-Fi</Cta>
             </>
           )}
-          {phase === "live" && <GoLive key="live" tick={tick} />}
+          {phase === "live" && <GoLive key="live" tick={tick} onDone={own ? () => setPhase("reading") : undefined} />}
           {phase === "reading" && (
             <>
               <Note tone="good">CNC mill 3 camera is connected. Unplug it and power it from any USB charger near the machine; it keeps its setup.</Note>
@@ -148,14 +158,18 @@ function ConnectDialog({ phase, onClose }: { phase: ConnectPhase; onClose: () =>
           )}
         </div>
       </Dialog>
-      {phase === "usb" && <UsbPicker />}
+      {phase === "usb" && <UsbPicker onPick={() => advance("usb-pick", "install")} onCancel={() => setPhase("start")} />}
     </>
   );
 }
 
-function Install() {
+function Install({ onDone }: { onDone?: () => void }) {
   const [p, setP] = useState(0);
   useEffect(() => { const t = window.setInterval(() => setP((x) => Math.min(100, x + 5)), 200); return () => window.clearInterval(t); }, []);
+  // In the walkthrough the script moves on; on its own the dialog goes to Wi-Fi when the bar is full.
+  const done = useRef(onDone);
+  done.current = onDone;
+  useEffect(() => { if (p < 100) return; const t = window.setTimeout(() => done.current?.(), 500); return () => window.clearTimeout(t); }, [p]);
   return (
     <div className="space-y-2">
       <div className="text-sm font-semibold">Installing PanelPal camera software 0.9.4</div>
@@ -164,9 +178,12 @@ function Install() {
     </div>
   );
 }
-function GoLive({ tick }: { tick: number }) {
+function GoLive({ tick, onDone }: { tick: number; onDone?: () => void }) {
   const [n, setN] = useState(0);
   useEffect(() => { const t = window.setInterval(() => setN((x) => Math.min(4, x + 1)), 900); return () => window.clearInterval(t); }, []);
+  const done = useRef(onDone);
+  done.current = onDone;
+  useEffect(() => { if (n < 4) return; const t = window.setTimeout(() => done.current?.(), 1500); return () => window.clearTimeout(t); }, [n]);
   return (
     <div className="space-y-3">
       <ul className="space-y-1.5 text-sm">
@@ -181,15 +198,15 @@ function GoLive({ tick }: { tick: number }) {
 }
 
 /** What Chrome shows when a site asks for a USB serial device. Drawn here: the demo never asks the browser for anything. */
-function UsbPicker() {
-  const { cta, guided } = useApp();
+function UsbPicker({ onPick, onCancel }: { onPick: () => void; onCancel: () => void }) {
+  const { cta } = useApp();
   return (
     <div className="absolute left-1/2 top-24 z-[70] w-[min(92%,380px)] -translate-x-1/2 rounded-[12px] border border-border-strong bg-surface p-4 shadow-raised" role="dialog" aria-label="Choose a USB device">
-      <div className="flex items-start gap-2"><div className="flex-1 text-sm font-semibold">panelpal.example wants to connect to a serial port</div><CloseIc className="h-4 w-4 text-muted" /></div>
+      <div className="flex items-start gap-2"><div className="flex-1 text-sm font-semibold">panelpal.example wants to connect to a serial port</div><button type="button" onClick={onCancel} aria-label="Cancel" className="text-muted"><CloseIc className="h-4 w-4" /></button></div>
       <div className="mt-3 rounded-[8px] border border-border-strong">
         <div className="bg-accent-soft px-3 py-2 text-sm font-medium text-accent-strong">USB JTAG/serial debug unit (ttyACM0)</div>
       </div>
-      <div className="mt-3 flex justify-end gap-2"><Button size="sm" variant="ghost">Cancel</Button><Cta size="sm" pulse={cta === "usb-pick"} onClick={() => guided("usb-pick")}>Connect</Cta></div>
+      <div className="mt-3 flex justify-end gap-2"><Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button><Cta size="sm" pulse={cta === "usb-pick"} onClick={onPick}>Connect</Cta></div>
       <p className="mt-2 text-[11px] text-faint">This picture of the browser's list is part of the demo.</p>
     </div>
   );

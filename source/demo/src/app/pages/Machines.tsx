@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { A, useNav } from "../nav";
 import { useApp } from "../ctx";
 import { Button, Card, CardHead, Dialog, Empty, Field, Input, MACHINE_PILL, MachinePill, Note, PageHeader, Select, Seg, Textarea, Cta, type MachineStatus } from "../ui";
-import { ALERTS, PIC_WORDS, panelSignals, fmt, history, machineView, machineViews, type MachineView, type PicMode } from "../world";
+import { AREAS, alertsFor, cameras, PIC_WORDS, panelSignals, fmt, history, machineView, machineViews, type MachineView, type PicMode } from "../world";
 import { FlatScreen } from "../feed/Feed";
 import { typeName } from "../../components/floor/parts";
 import { SignalTile, SendingOptions } from "../Tiles";
@@ -93,7 +93,7 @@ export function MachineDetail({ id, editing: editingStage }: { id: string; editi
   const [asked, setAsked] = useState(false);
   const [pics, setPics] = useState<PicMode | null>(null);
   const sel = m.signals.find((s) => s.id === selId) ?? m.signals[0];
-  const mine = ALERTS.filter((a) => a.machineId === id && a.state === "open");
+  const mine = alertsFor(world).filter((a) => a.machineId === id && a.state === "open");
   const live = m.status !== "uncalibrated";
   const mode = pics ?? m.camera?.pics ?? "off";
   const showPic = m.camera && (mode !== "off" || asked);
@@ -183,15 +183,16 @@ export function EditMachineDialog({ open, id, onClose, guidedSave }: { open: boo
   const { world, guided } = useApp();
   const m = machineView(id, world);
   const [cam, setCam] = useState(m.camera?.id ?? (id === "cnc3" && world.cam3 ? "cam-cnc3" : ""));
-  const cams = Object.values(machineViews(world)).filter((x) => x.camera).map((x) => x.camera!);
+  // every camera, also one not yet picked on a machine (the new CNC mill 3 camera before Save)
+  const cams = cameras(world);
   const save = () => { if (guidedSave) guided("save-machine"); onClose(); };
   return (
     <Dialog open={open} onClose={onClose} title={`Edit ${m.name}`} footer={<><Button variant="ghost" onClick={onClose}>Cancel</Button><Cta pulse={!!guidedSave} onClick={save}>Save</Cta></>}>
       <div className="space-y-4">
         <Field label="Name"><Input defaultValue={m.name} /></Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Type"><Input defaultValue="CNC mill" /></Field>
-          <Field label="Area"><Select defaultValue={m.area}>{["Machining", "Goods-in", "Press/weld", "Assembly / QA", "Office / QC"].map((a) => <option key={a}>{a}</option>)}</Select></Field>
+          <Field label="Type"><Input defaultValue={typeName(m.type, m.id)} /></Field>
+          <Field label="Area"><Select defaultValue={m.area}>{AREAS.map((a) => <option key={a}>{a}</option>)}</Select></Field>
         </div>
         <Field label="Camera" hint="The camera pointed at this machine's screen.">
           <Select value={cam} onChange={(e) => setCam(e.target.value)}>
@@ -200,7 +201,7 @@ export function EditMachineDialog({ open, id, onClose, guidedSave }: { open: boo
           </Select>
         </Field>
         <Field label="Sensor type" hint="What the camera is pointed at. The AI then maps only that kind of sensor."><Select defaultValue="screen"><option value="screen">Machine screen with numbers and words</option><option value="auto">Let the AI decide</option></Select></Field>
-        <Field label="Hint for the AI" hint="What is on the screen and what to read. Helps auto-mapping."><Textarea rows={2} defaultValue="Mill control. Read spindle speed (rpm), spindle load (%), parts today, alarm and feed rate." /></Field>
+        <Field label="Hint for the AI" hint="What is on the screen and what to read. Helps auto-mapping."><Textarea rows={2} defaultValue={`Read ${m.signals.map((s) => s.label.toLowerCase() + (s.unit ? ` (${s.unit})` : "")).join(", ")}.`} /></Field>
       </div>
     </Dialog>
   );

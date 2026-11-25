@@ -74,7 +74,7 @@ const phys = (s: Signal, style: NonNullable<Signal["style"]>, range?: [number, n
 export const SIGNALS: Record<string, Signal[]> = {
   cnc1: [rpm(7200), st(load(55), "bar", [0, 100]), counter("parts", "Parts today", 288, 7), word("alarm", "Alarm", "None", 0.93)],
   cnc2: [word("coolant", "Coolant", "Low", 0.96, true), rpm(6800), st(load(61), "bar", [0, 100]), counter("parts", "Parts today", 241, 9)],
-  cnc3: [rpm(8000), load(42), counter("parts", "Parts today", 312, 6), word("alarm", "Alarm", "None", 0.88), level("feed", "Feed rate", "mm/min", 1250, 10, 0.93, { low: 0, high: 3000 })],
+  cnc3: [rpm(8000), load(42), counter("parts", "Parts today", 312, 6), word("alarm", "Alarm", "None", 0.93), level("feed", "Feed rate", "mm/min", 1250, 10, 0.93, { low: 0, high: 3000 })],
   cnc4: [rpm(6500), st(load(48), "bar", [0, 100]), counter("parts", "Parts today", 265, 8), word("alarm", "Alarm", "None", 0.94)],
   saw: [st(level("blade", "Blade speed", "m/min", 62, 1, 0.95, { low: 20, high: 90 }), "seven"), st(counter("cuts", "Cut count", 540, 8, 0.97), "wheel")],
   // The parts washer has no screen: a real tank-temperature gauge, a level sight glass, a lamp with a label and a mechanical counter.
@@ -108,11 +108,15 @@ export function history(machineId: string, sig: Signal, t: number): { t: number;
   const key = machineId.length * 7 + sig.id.length * 13;
   return Array.from({ length: n }, (_, i) => {
     const age = n - 1 - i;
-    if (sig.counter) return { t: -age, v: Math.max(0, Math.round(now - age * (Number(sig.value(60)) - Number(sig.value(0))) / 1)) };
+    // Counters: the count so far today spread over about 5 hours of work, so the last hour is a steady ramp (never a fake stop at 0).
+    if (sig.counter) return { t: -age, v: Math.max(0, Math.round(now - (age * now) / 300)) };
     const stop = (sig.id === "load" || sig.id === "rpm") && machineId.startsWith("cnc") && i >= 35 && i <= 40;
     const base = Number(sig.value(0));
-    const wob = Math.sin((i + key) / 4) * (Math.abs(base) > 100 ? base * 0.012 : Math.max(1, Math.abs(base) * 0.04)) + Math.sin((i * 1.7 + key) / 2.3) * (Math.abs(base) > 100 ? base * 0.006 : 0.6);
-    return { t: -age, v: stop ? (i === 35 || i === 40 ? base * 0.4 : base * 0.04) : Math.round((base + wob) * 10) / 10 };
+    // a value that reads 0 (a stopped welder) stays at 0; others wobble a little, inside the instrument's range and never below 0
+    const wob = base === 0 ? 0 : Math.sin((i + key) / 4) * (Math.abs(base) > 100 ? base * 0.012 : Math.max(1, Math.abs(base) * 0.04)) + Math.sin((i * 1.7 + key) / 2.3) * (Math.abs(base) > 100 ? base * 0.006 : 0.6);
+    const [lo, hi] = sig.range ?? [0, sig.unit === "%" ? 100 : Infinity];
+    const v = stop ? (i === 35 || i === 40 ? base * 0.4 : base * 0.04) : Math.round((base + wob) * 10) / 10;
+    return { t: -age, v: Math.min(hi, Math.max(lo, 0, v)) };
   });
 }
 
@@ -130,7 +134,9 @@ export const statusOf = (m: Machine, w: World): MachineStatus =>
 
 export function machineViews(w: World): MachineView[] {
   const cams = cameras(w);
-  return MACHINES.map((m) => ({ ...m, status: statusOf(m, w), signals: SIGNALS[m.id], camera: cams.find((c) => c.machineId === m.id) ?? null }));
+  // CNC mill 3's camera counts on the machine only once it is picked there (world.cnc3 is not "none")
+  const linked = (id: string) => id !== "cnc3" || w.cnc3 !== "none";
+  return MACHINES.map((m) => ({ ...m, status: statusOf(m, w), signals: SIGNALS[m.id], camera: (linked(m.id) && cams.find((c) => c.machineId === m.id)) || null }));
 }
 export const machineView = (id: string, w: World) => machineViews(w).find((m) => m.id === id)!;
 
@@ -187,6 +193,9 @@ export const ALERTS: AlertItem[] = [
   { id: 5, state: "resolved", machineId: "robot", label: "Fault codes", title: "Robot fault code E31", detail: "Cleared after a restart.", when: "Wed 11:05 to 11:12" },
   { id: 6, state: "resolved", machineId: "cnc4", label: "Spindle load", title: "Spindle load above 85%", detail: "Heavy cut on a new program.", when: "Tue 14:41 to 14:44" },
 ];
+
+/** The alerts that exist in this world: CNC mill 3 has none until it is live (it has no readings before that). */
+export const alertsFor = (w: World) => ALERTS.filter((a) => a.machineId !== "cnc3" || w.cnc3 === "live");
 
 /* ---------------------------------- downtime (last 7 days) ---------------------------------- */
 

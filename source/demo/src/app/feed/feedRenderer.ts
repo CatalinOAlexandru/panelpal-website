@@ -9,7 +9,7 @@ import type { MachineType } from "../../../../shared/floorplan";
 import { MACHINES, clock } from "../../data";
 import { SIGNALS, gaugeSignals, panelSignals, type Signal } from "../world";
 const SIGS_OF = (id: string) => SIGNALS[id];
-import { HMI_H, HMI_W, MEDIUM, drawGaugeFace, drawHmi, drawInstrument2D, hmiTitle, instrumentSize, isPlate } from "./hmi";
+import { HMI_H, HMI_W, MEDIUM, drawGaugeBoard, drawGaugeFace, drawHmi, drawInstrument2D, hmiTitle, instrumentSize, isPlate } from "./hmi";
 
 export const FEED_W = 560, FEED_H = 350;
 
@@ -253,7 +253,19 @@ export function drawFeed(target: HTMLCanvasElement, id: string, tick: number, ph
   const ctx = target.getContext("2d");
   const r = renderer();
   if (!ctx) return false;
-  if (!r) { ctx.drawImage(e.hmi, 0, 0, target.width, target.height); return false; }
+  if (!r) {
+    // No WebGL: show the flat view. A machine without a screen (gauges on pipes, a plate of instruments) is drawn as FlatScreen draws it.
+    if (!e.hasScreen) {
+      const panel = panelSignals(id);
+      const sigs = panel.length ? panel : SIGNALS[id];
+      const vals = sigs.map((s) => s.value(tick));
+      const hctx = e.hmi.getContext("2d")!;
+      if (panel.length) drawHmi(hctx, hmiTitle(id), sigs, vals, clock(tick, true), running, isPlate(id));
+      else drawGaugeBoard(hctx, hmiTitle(id), sigs, vals);
+    }
+    ctx.drawImage(e.hmi, 0, 0, target.width, target.height);
+    return false;
+  }
   e.cam.position.copy(e.home); // a fixed mount: the picture does not drift
   void phase;
   e.cam.lookAt(e.look);

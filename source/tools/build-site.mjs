@@ -51,7 +51,7 @@ h = h.replace('<link rel="stylesheet" href="site.css">', '<link rel="stylesheet"
 h = h.replace('aria-label="Join the waitlist (design only)"', 'aria-label="Join the waitlist (example form, not live)"')
      .replace('<span class="fine">Design only. This form does not send anything.</span>', '<span class="fine"><b>Example form · not live.</b> This form does not send anything.</span>');
 if (HERO_PHONE) h = h.replace('<img class="phone" src="img/s6-logging.png" alt="Phone screen: a machine logging live, with speed, load, parts and uptime.">',
-  '<img class="phone" src="img/hero-phone-cnc3.png" alt="Phone screen from the PanelPal demo: CNC mill 3 logging live. Spindle speed 8,000 rpm, load 42 %, parts today 312, uptime today 87 %. Example data.">');
+  '<img class="phone" src="img/hero-phone-cnc3.png" alt="Phone screen from the PanelPal demo: CNC mill 1 running, with the screen its camera reads and each value. Example data.">');
 // Copy fixes (approved): cost wording, and a "Planned" label on every promise that is not yet a product fact.
 const must = (from, to) => { if (!h.includes(from)) throw new Error(`copy fix: text not found: ${from}`); h = h.replace(from, to); };
 // 20 Nov (sam-eee): no camera price in the setup flow ("Feed" row). Was "Target cost about $10".

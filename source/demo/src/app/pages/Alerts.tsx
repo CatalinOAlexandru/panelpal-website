@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { A } from "../nav";
 import { Button, Card, Seg, PageHeader, AlertPill } from "../ui";
-import { ALERTS, machineView, type AlertItem } from "../world";
+import { alertsFor, machineView, type AlertItem } from "../world";
 import { useApp } from "../ctx";
 
 type Tab = "open" | "acknowledged" | "resolved";
@@ -11,8 +11,9 @@ export function AlertsPage() {
   const [tab, setTab] = useState<Tab>("open");
   const [done, setDone] = useState<Record<number, "acknowledged" | "resolved">>({});
   const state = (a: AlertItem): AlertItem["state"] => done[a.id] ?? a.state;
-  const items = ALERTS.filter((a) => state(a) === tab);
-  const open = ALERTS.filter((a) => state(a) === "open").length;
+  const all = alertsFor(world);
+  const items = all.filter((a) => state(a) === tab);
+  const open = all.filter((a) => state(a) === "open").length;
   return (
     <>
       <PageHeader title="Alerts" sub={open ? `${open} open` : "Rules are set per value on each machine page."} />

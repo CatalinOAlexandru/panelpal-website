@@ -265,6 +265,9 @@ const CAM_AT: Partial<Record<MachineType, (w: number, d: number) => V3>> = {
   bandsaw: (w, d) => [w * 0.21, 0.85, d * 0.3 + 0.4], washer: (w, d) => [w * 0.3, 0.9, d * 0.4 + 0.4], cmm: (w, d) => [w * 0.3 + 0.45, 0.9, d / 2 - 0.05],
 };
 
+/** The utilities cabinet (placed as a compressor on the plan, drawn as its own model): its height, stack light and camera. */
+const UTIL = { h: 1.9, light: (w: number, d: number): V3 => [w * 0.3, 1.9, -d * 0.25], cam: (w: number, d: number): V3 => [w * 0.3, 1.15, d * 0.2 + 0.5] };
+
 /** Status ring on the floor round the footprint (dashed when not set up). */
 function Ring({ w, d, status, selected }: { w: number; d: number; status: DashStatus | null; selected: boolean }) {
   const pad = MATERIALS_3D.statusRing.innerPad, t = selected ? MATERIALS_3D.selected.ringWidth : MATERIALS_3D.statusRing.width, y = 0.012;
@@ -378,9 +381,10 @@ function MachineNode({ m, p, sel, hi, dim, compact, mode, tip, onSelect, setHove
   m: PlanMachine; p: Placed; sel: boolean; hi: boolean; dim: boolean; compact: boolean; mode: PlanMode; tip: boolean;
   onSelect: (id: string) => void; setHover: (id: string | null) => void;
 }) {
-  const st = m.status, h = H[p.type];
+  const util = m.id === "util";
+  const st = m.status, h = util ? UTIL.h : H[p.type];
   const variant = dim ? "ghost" : st === "notSetUp" ? "faded" : "";
-  const light = LIGHT_AT[p.type]?.(p.w, p.d), cam = CAM_AT[p.type]?.(p.w, p.d);
+  const light = util ? UTIL.light(p.w, p.d) : LIGHT_AT[p.type]?.(p.w, p.d), cam = util ? UTIL.cam(p.w, p.d) : CAM_AT[p.type]?.(p.w, p.d);
   const col = st ? STATUS[st] : null;
   const click = (e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); if (e.delta > 6) return; onSelect(m.id); };
   const hover = typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;

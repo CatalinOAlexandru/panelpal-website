@@ -11,7 +11,9 @@ export function Dialog({ open, onClose, title, children, footer, wide }: { open:
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeRef.current();
     document.addEventListener("keydown", onKey);
-    ref.current?.querySelector<HTMLElement>("input, select, textarea, button:not([data-close])")?.focus();
+    // Focus the dialog itself, not its first field: a focused field would take the presenter's arrow keys and clicker
+    // (the demo's key handler ignores keys typed into fields), and on a phone it would open the keyboard.
+    ref.current?.focus();
     return () => {
       document.removeEventListener("keydown", onKey);
     };
@@ -23,7 +25,8 @@ export function Dialog({ open, onClose, title, children, footer, wide }: { open:
         ref={ref}
         role="dialog"
         aria-modal="true"
-        className={`flex max-h-[92%] w-full flex-col rounded-t-[16px] bg-surface shadow-raised sm:rounded-[16px] ${wide ? "sm:max-w-3xl" : "sm:max-w-lg"}`}
+        tabIndex={-1}
+        className={`flex max-h-[92%] w-full flex-col rounded-t-[16px] outline-none bg-surface shadow-raised sm:rounded-[16px] ${wide ? "sm:max-w-3xl" : "sm:max-w-lg"}`}
       >
         <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3.5">
           <h2 className="text-[17px] font-semibold">{title}</h2>

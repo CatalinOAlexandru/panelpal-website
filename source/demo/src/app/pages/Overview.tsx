@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { A, useNav } from "../nav";
 import { useApp } from "../ctx";
-import { ALERTS, fmt, machineViews } from "../world";
+import { alertsFor, fmt, machineViews } from "../world";
 import { Card, CardHead, MachinePill, PageHeader, Seg, Stat, type MachineStatus } from "../ui";
 import { DashFilterRow, FloorDashboard, planMachines, useDashFilter } from "../../components/plan";
 
@@ -22,7 +22,7 @@ export function Overview({ plan: initial = "2d", select }: { plan?: "2d" | "3d";
   const count = (s: MachineStatus) => ms.filter((m) => m.status === s).length;
   const live = ms.length - off.length;
   const cams = ms.filter((m) => m.camera).length;
-  const open = ALERTS.filter((a) => a.state === "open");
+  const open = alertsFor(world).filter((a) => a.state === "open");
   return (
     <>
       <PageHeader title="Overview" sub={`Example Factory · Unit 1 · ${live} of ${ms.length} machines live · ${cams} of ${cams} cameras online · last read 1 s ago`} />

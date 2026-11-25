@@ -58,7 +58,8 @@ function Demo() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
-      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      // keys meant for a field, a dropdown or a radio group stay there
+      if (t && (["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) || t.isContentEditable || ["radio", "tab", "slider"].includes(t.getAttribute("role") ?? ""))) return;
       if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); next(); }
       if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); back(); }
     };
@@ -177,7 +178,7 @@ function Demo() {
               ))}
             </div>
           </div>
-          <button onClick={next} disabled={isLast} aria-label="Next" aria-disabled={isLast || undefined} className={`btn-primary btn-icon ${nextPulse && !lg ? "guide-pulse" : ""}`}>{nextLabel} <Chevron dir="right" /></button>
+          <button onClick={next} disabled={isLast} aria-disabled={isLast || undefined} className={`btn-primary btn-icon ${nextPulse && !lg ? "guide-pulse" : ""}`}>{nextLabel} <Chevron dir="right" /></button>
         </nav>
       </div>
     </ChatCtx.Provider></PulseCtx.Provider></DemoCtx.Provider>

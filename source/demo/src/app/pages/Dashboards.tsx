@@ -3,7 +3,7 @@ import { useNav } from "../nav";
 import { usePulse } from "../../components/Btn";
 import { useApp } from "../ctx";
 import { Card, CardHead, Button, PageHeader, Seg, MachinePill, SparkIc, PlusIc } from "../ui";
-import { ALERTS, DASHBOARDS, DOWNTIME, downtimeByArea, fmt, history, hm, machineView, type Widget } from "../world";
+import { alertsFor, DASHBOARDS, DOWNTIME, downtimeByArea, fmt, history, hm, machineView, type Widget } from "../world";
 import { LineChart, Spark, lineColor } from "../Chart";
 import { SignalTile } from "../Tiles";
 import { FlatScreen } from "../feed/Feed";
@@ -84,7 +84,7 @@ function WidgetCard({ w }: { w: Widget }) {
           {m.status !== "uncalibrated" && <div className="grid grid-cols-2 gap-2">{m.signals.slice(0, 2).map((s) => <SignalTile key={s.id} machineId={m.id} signal={s} tick={tick} />)}</div>}
           <a href="#" onClick={(e) => { e.preventDefault(); go({ page: "machines", id: m.id }); }} className="text-[13px] font-semibold text-accent">Open machine</a></div>; })()}
         {w.type === "screen" && <FlatScreen id={w.machineId} tick={tick} boxes={false} />}
-        {w.type === "alerts" && <div className="space-y-1.5 text-[13px]">{ALERTS.filter((a) => a.state === "open").map((a) => <div key={a.id} className="flex gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-fault-dot" /><span><b className="font-semibold">{machineView(a.machineId, world).name}</b> · {a.title}</span></div>)}</div>}
+        {w.type === "alerts" && <div className="space-y-1.5 text-[13px]">{alertsFor(world).filter((a) => a.state === "open").map((a) => <div key={a.id} className="flex gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-fault-dot" /><span><b className="font-semibold">{machineView(a.machineId, world).name}</b> · {a.title}</span></div>)}</div>}
         {w.type === "bars" && <div className="space-y-2.5">{downtimeByArea().map((a) => (
           <div key={a.area}><div className="flex items-baseline justify-between gap-2 text-[13px]"><span>{a.zoneName}</span><span className="tnum font-semibold">{hm(a.minutes)}</span></div>
             <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-border"><div className="h-full rounded-full bg-accent" style={{ width: `${(a.minutes / downtimeByArea()[0].minutes) * 100}%` }} /></div>

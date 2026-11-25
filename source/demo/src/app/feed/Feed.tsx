@@ -26,7 +26,7 @@ export function Feed({ id, tick, running = true, className = "", fps = 2, still 
     return () => { alive = false; window.clearInterval(timer); };
   }, [seen, id, fps, still]);
   return (
-    <div className={`relative aspect-[16/10] overflow-hidden bg-[#1f2328] ${className}`}>
+    <div className={`relative aspect-[16/10] overflow-hidden bg-cam-scrim ${className}`}>
       <canvas ref={ref} width={560} height={350} className="absolute inset-0 h-full w-full object-cover" role="img" aria-label={`Camera picture of the ${MACHINES.find((m) => m.id === id)?.name} screen. Example data.`} />
       <div className="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_center,transparent_60%,rgba(0,0,0,0.28))]" />
       {children}

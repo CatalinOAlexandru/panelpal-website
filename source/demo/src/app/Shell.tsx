@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { A, useNav, type Page } from "./nav";
 import { useApp } from "./ctx";
 import { useChat, PanelAIWindow } from "./Chat";
-import { ALERTS } from "./world";
+import { alertsFor } from "./world";
 import { BellIc, CameraIc, CubeIc, DashIc, GearIc, LiveDot, MachineIc, OverviewIc, SparkIc } from "./ui";
 import { Logo } from "../components/ui";
 
@@ -16,13 +16,13 @@ const NAV: { page: Page; label: string; icon: ReactNode; mobile: boolean }[] = [
   { page: "assets", label: "Machine assets", icon: <CubeIc />, mobile: false },
   { page: "settings", label: "Settings", icon: <GearIc />, mobile: false },
 ];
-const OPEN = ALERTS.filter((a) => a.state === "open").length;
 
 /** The app frame, as in the PanelPal web app: top bar, side nav (tab bar on a phone), page. */
 export function Shell({ children }: { children: ReactNode }) {
   const { route, go } = useNav();
   const chat = useChat();
-  useApp();
+  const { world } = useApp();
+  const OPEN = alertsFor(world).filter((a) => a.state === "open").length;
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-bg">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg px-4 sm:px-5">

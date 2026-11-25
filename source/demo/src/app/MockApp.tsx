@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { NavCtx, type Route } from "./nav";
 import { AppCtx, type AppApi } from "./ctx";
 import { ChatCtx, useChat } from "./Chat";
+import { ANSWERS, PROMPTS } from "./panelai";
 import { Shell } from "./Shell";
 import type { View } from "./view";
 import { FINISHED, type World } from "./world";
@@ -29,7 +30,13 @@ export function MockApp({ view, tick, next, go }: { view: View; tick: number; ne
   useEffect(() => {
     chat.setOpen(false);
     if (view.chat === "fresh") chat.clear();
-    if (view.chat === "downtime" && chat.messages.length === 0) chat.ask("downtime");
+    // "The answer" stage must show the downtime answer, whatever was asked before (another prompt, typed text, a jump from the stage list)
+    if (view.chat === "downtime") {
+      const last = chat.messages[chat.messages.length - 1];
+      const q = PROMPTS.find((p) => p.id === "downtime")!.text;
+      const showing = !!last && (last.role === "assistant" ? last.answer === ANSWERS.downtime : last.text === q);
+      if (!showing) { chat.clear(); chat.ask("downtime"); }
+    }
     // once per stage (the app is remounted for each stage)
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { top.current?.closest("[data-app-scroll]")?.scrollTo(0, 0); }, [route.page, route.id, route.sub]);

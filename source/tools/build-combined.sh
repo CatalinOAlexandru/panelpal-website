@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; OUT="$ROOT/deploy/out"
 "$ROOT/tools/sync-design-assets.sh"
-# 1. Hero phone: 390 px screenshot of the demo CNC mill 3 view (needs the demo dev server on 5190).
+# 1. Hero phone: 390 px screenshot of the demo machine page, CNC mill 1 (step 2, stage 2; needs the demo dev server on 5190).
 node "$ROOT/tools/hero-phone.mjs" "${DEMO_DEV_URL:-http://localhost:5190/}"
 python3 "$ROOT/tools/frame-phone.py" "$ROOT/site/generated/demo-cnc3-390.png" "$ROOT/site/generated/hero-phone-cnc3.png"
 # 2. Demo with a relative base.

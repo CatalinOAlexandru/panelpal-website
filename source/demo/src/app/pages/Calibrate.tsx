@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useApp } from "../ctx";
+import { useNav } from "../nav";
 import { Button, Card, CardHead, Conf, PageHeader, Note, Spinner, Cta } from "../ui";
 import { Feed, FlatScreen } from "../feed/Feed";
 import { fmt, machineView } from "../world";
@@ -10,8 +11,18 @@ const DEFAULT: [number, number][] = [[0.3, 0.28], [0.7, 0.28], [0.7, 0.7], [0.3,
 const TEST_CONF: Record<string, number> = { feed: 0.61 };
 
 /** Calibration, as in the app: corners on the camera picture, boxes on the flat screen, test read, save. Driven by the script. */
-export function Calibrate({ id, phase }: { id: string; phase: CalPhase }) {
+export function Calibrate({ id, phase: scripted }: { id: string; phase: CalPhase }) {
   const { world, tick, cta, guided } = useApp();
+  const nav = useNav();
+  // The script sets the phase in the walkthrough. A button the script does not expect (free roam, Recalibrate) moves this page on itself.
+  const [local, setLocal] = useState<CalPhase | null>(null);
+  const phase = local ?? scripted;
+  const press = (name: string, own: () => void) => (cta === name ? guided(name) : own());
+  useEffect(() => {
+    if (local !== "mapping") return;
+    const t = window.setTimeout(() => setLocal("mapped"), 3000);
+    return () => window.clearTimeout(t);
+  }, [local]);
   const m = machineView(id, world);
   const [found, setFound] = useState<[number, number][] | null>(null);
   const [secs, setSecs] = useState(0);
@@ -33,9 +44,9 @@ export function Calibrate({ id, phase }: { id: string; phase: CalPhase }) {
       <PageHeader back={{ to: { page: "machines", id }, label: m.name }} title={`Calibrate ${m.name}`}
         sub="Drag the four corners onto the screen, then check the value boxes. Auto-map does both with AI."
         actions={<>
-          <Cta pulse={cta === "automap"} variant={cta === "automap" ? "solid" : "primary"} disabled={phase === "mapping"} onClick={() => guided("automap")}>✦ Auto-map with AI</Cta>
-          <Cta pulse={cta === "test-read"} variant="primary" disabled={!flat} onClick={() => guided("test-read")}>Test read</Cta>
-          <Cta pulse={cta === "save-cal"} disabled={phase !== "tested"} onClick={() => guided("save-cal")}>Save</Cta>
+          <Cta pulse={cta === "automap"} variant={cta === "automap" ? "solid" : "primary"} disabled={phase === "mapping"} onClick={() => press("automap", () => setLocal("mapping"))}>✦ Auto-map with AI</Cta>
+          <Cta pulse={cta === "test-read"} variant="primary" disabled={!flat} onClick={() => press("test-read", () => setLocal("tested"))}>Test read</Cta>
+          <Cta pulse={cta === "save-cal"} disabled={phase !== "tested"} onClick={() => press("save-cal", () => nav.go({ page: "machines", id }))}>Save</Cta>
         </>} />
       <div className="grid gap-4 xl:grid-cols-2">
         <Card className="overflow-hidden">
