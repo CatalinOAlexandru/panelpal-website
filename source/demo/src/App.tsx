@@ -7,7 +7,7 @@ import { SITE } from "./data";
 import { PulseCtx } from "./components/Btn";
 import { MockApp, ChatCtx } from "./app/MockApp";
 import { useChatState } from "./app/Chat";
-import { Closing } from "./steps/Transition";
+import { Closing, SITE_HOME } from "./steps/Transition";
 
 function useMedia(q: string) {
   const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
@@ -95,12 +95,12 @@ function Demo() {
         {/* Mobile and tablet: one thin bar with the PanelPal logo */}
         {!lg && (
           <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border bg-bg px-3">
-            <Logo className="h-5" /><span className="truncate text-xs text-muted">Demo · {SITE.company}</span>
+            <a href={SITE_HOME} aria-label="PanelPal home page" title="Back to the PanelPal website"><Logo className="h-5" /></a><span className="truncate text-xs text-muted">Demo · {SITE.company}</span>
           </div>
         )}
         {/* Desktop header */}
         <header className="hidden h-14 shrink-0 items-center gap-4 border-b border-border bg-bg px-6 lg:flex">
-          <Logo className="h-6" />
+          <a href={SITE_HOME} aria-label="PanelPal home page" title="Back to the PanelPal website"><Logo className="h-6" /></a>
           <span className="text-sm text-muted">Demo · {SITE.company}</span>
           <ol className="ml-auto flex items-center gap-1" aria-label="Demo steps">
             {STEPS.map((s) => (
