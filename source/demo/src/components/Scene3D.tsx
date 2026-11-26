@@ -84,7 +84,7 @@ function Cam({ p, live }: { p: V3; live: boolean }) {
   );
 }
 
-function Model({ type, w, d }: { type: MachineType; w: number; d: number }): ReactNode {
+function Model({ type, w, d }: { type: MachineType | "utilities"; w: number; d: number }): ReactNode {
   switch (type) {
     case "cnc-mill": {
       const bx = w * 0.06, bw = w * 0.72, bd = d * 0.78, bz = -d * 0.06, fz = bz + bd / 2;
@@ -231,6 +231,16 @@ function Model({ type, w, d }: { type: MachineType; w: number; d: number }): Rea
         <B p={[w * 0.1, 0.98, 0]} s={[0.6, 0.25, 0.5]} m="carton" />
       </>;
     }
+    case "utilities":
+      return <>
+        <B p={[0, 0.95, -d * 0.12]} s={[w * 0.8, 1.9, d * 0.5]} m="body" />
+        <B p={[0, 1.25, d * 0.14]} s={[w * 0.66, 0.9, 0.05]} m="trim" />
+        {[-1, 0, 1].map((i) => <C key={i} p={[i * w * 0.2, 1.4, d * 0.18]} r={0.11} l={0.04} m="screen" axis="z" />)}
+        {[-1, 0, 1].map((i) => <C key={`g${i}`} p={[i * w * 0.2, 0.95, d * 0.18]} r={0.11} l={0.04} m="screen" axis="z" />)}
+        <C p={[0, 0.5, d * 0.2]} r={0.05} l={w * 0.95} m="steel" axis="x" />
+        <C p={[0, 0.3, d * 0.2]} r={0.05} l={w * 0.95} m="red" axis="x" />
+        {[-1, 1].map((sx) => <C key={sx} p={[sx * w * 0.47, 0.8, d * 0.2]} r={0.05} l={1.6} m="steel" />)}
+      </>;
     case "compressor":
       return <>
         {[-1, 1].map((sx) => <B key={sx} p={[sx * w * 0.32, 0.12, 0]} s={[0.12, 0.24, d * 0.5]} m="dark" />)}
@@ -254,6 +264,9 @@ const CAM_AT: Partial<Record<MachineType, (w: number, d: number) => V3>> = {
   welder: (w, d) => [-w * 0.32, 0.75, -d * 0.25 + 0.8], "robot-cell": (w, d) => [-w / 2 + w * 0.12, 1.05, d / 2 + 0.15],
   bandsaw: (w, d) => [w * 0.21, 0.85, d * 0.3 + 0.4], washer: (w, d) => [w * 0.3, 0.9, d * 0.4 + 0.4], cmm: (w, d) => [w * 0.3 + 0.45, 0.9, d / 2 - 0.05],
 };
+
+/** The utilities cabinet (placed as a compressor on the plan, drawn as its own model): its height, stack light and camera. */
+const UTIL = { h: 1.9, light: (w: number, d: number): V3 => [w * 0.3, 1.9, -d * 0.25], cam: (w: number, d: number): V3 => [w * 0.3, 1.15, d * 0.2 + 0.5] };
 
 /** Status ring on the floor round the footprint (dashed when not set up). */
 function Ring({ w, d, status, selected }: { w: number; d: number; status: DashStatus | null; selected: boolean }) {
@@ -368,9 +381,10 @@ function MachineNode({ m, p, sel, hi, dim, compact, mode, tip, onSelect, setHove
   m: PlanMachine; p: Placed; sel: boolean; hi: boolean; dim: boolean; compact: boolean; mode: PlanMode; tip: boolean;
   onSelect: (id: string) => void; setHover: (id: string | null) => void;
 }) {
-  const st = m.status, h = H[p.type];
+  const util = m.id === "util";
+  const st = m.status, h = util ? UTIL.h : H[p.type];
   const variant = dim ? "ghost" : st === "notSetUp" ? "faded" : "";
-  const light = LIGHT_AT[p.type]?.(p.w, p.d), cam = CAM_AT[p.type]?.(p.w, p.d);
+  const light = util ? UTIL.light(p.w, p.d) : LIGHT_AT[p.type]?.(p.w, p.d), cam = util ? UTIL.cam(p.w, p.d) : CAM_AT[p.type]?.(p.w, p.d);
   const col = st ? STATUS[st] : null;
   const click = (e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); if (e.delta > 6) return; onSelect(m.id); };
   const hover = typeof window !== "undefined" && window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
@@ -379,7 +393,7 @@ function MachineNode({ m, p, sel, hi, dim, compact, mode, tip, onSelect, setHove
       <group onClick={click}
         onPointerOver={(e) => { e.stopPropagation(); if (hover) { setHover(m.id); document.body.style.cursor = "pointer"; } }}
         onPointerOut={() => { if (hover) { setHover(null); document.body.style.cursor = ""; } }}>
-        <Variant.Provider value={variant}><Model type={p.type} w={p.w} d={p.d} /></Variant.Provider>
+        <Variant.Provider value={variant}><Model type={m.id === "util" ? "utilities" : p.type} w={p.w} d={p.d} /></Variant.Provider>
         {/* invisible hit box over the footprint */}
         <mesh geometry={BOX} position={[0, h / 2, 0]} scale={[p.w, h, p.d]} visible={false} />
       </group>

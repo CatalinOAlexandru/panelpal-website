@@ -59,15 +59,6 @@ export function Logo({ className = "h-6" }: { className?: string }) {
 }
 
 
-export function Banner() {
-  return (
-    <div role="note" className="sticky top-0 z-50 flex items-center justify-center gap-2 border-b border-warning-dot/60 bg-warning-soft px-3 py-1.5 text-center text-[12.5px] font-semibold text-warning">
-      <span aria-hidden>▲</span> Demo · example data
-      <span className="hidden font-normal text-muted sm:inline">· all names and numbers are made up</span>
-    </div>
-  );
-}
-
 /** Phone frame (desktop). On small screens the app fills the viewport instead. */
 export function PhoneFrame({ children }: { children: ReactNode }) {
   return (

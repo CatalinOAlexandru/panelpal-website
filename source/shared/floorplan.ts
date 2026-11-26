@@ -64,7 +64,7 @@ export const LOADING_BAY: Rect & { name: string } = { name: "Loading bay", x: 0.
 /** Process flow route (polyline, metres): goods-in -> saw -> CNC cell -> press/weld -> assembly -> conveyor (west) -> packing. */
 export const FLOW: [number, number][] = [[6.6, 10.2], [6.6, 11.9], [36.0, 11.9], [36.0, 12.7], [22.2, 12.7], [22.2, 13.6], [4.8, 13.6], [4.8, 14.8]];
 
-/** The 12 monitored machines, keyed by the ids in demo/src/data.ts. */
+/** The 13 monitored machines, keyed by the ids in demo/src/data.ts. */
 export const MACHINE_LAYOUT: Record<string, Placed> = {
   // Band saw along the stock rack: bar stock runs north -> south through the saw to the walkway.
   saw: { id: "saw", type: "bandsaw", zone: "goods-in", x: 6.6, y: 7.2, w: 5.6, d: 2.4, rotation: 90 },
@@ -81,6 +81,8 @@ export const MACHINE_LAYOUT: Record<string, Placed> = {
   robot: { id: "robot", type: "robot-cell", zone: "assembly-qa", x: 24.4, y: 18.0, w: 6.4, d: 5.2, rotation: 180 },
   wash: { id: "wash", type: "washer", zone: "assembly-qa", x: 31.0, y: 17.6, w: 4.8, d: 3.6, rotation: 180 },
   cmm: { id: "cmm", type: "cmm", zone: "office-qc", x: 13.2, y: 18.4, w: 5.2, d: 4.0, rotation: 180 },
+  // Utilities cabinet with water, oil and air pipes and gauges. It is drawn as the compressor unit in 2D (same footprint class); the 3D view has its own model.
+  util: { id: "util", type: "compressor", zone: "utilities", x: 37.4, y: 22.6, w: 2.4, d: 1.0, rotation: 0 },
 };
 
 /** Equipment on the plan that is NOT a monitored machine (no tile, no camera, no status). */

@@ -20,10 +20,10 @@ export interface PlanMachine {
 
 export const displayName = (m: Machine) => (m.id === "wash" ? "Washer" : m.id === "cmm" ? "CMM" : m.name);
 
-export function planMachines(mode: PlanMode, tick: number, liveIds: string[] = [TARGET_ID]): PlanMachine[] {
+export function planMachines(mode: PlanMode, tick: number, liveIds: string[] = [TARGET_ID], offIds: string[] = []): PlanMachine[] {
   const v = liveValues(tick);
   return MACHINES.map((m) => {
-    const live = mode === "final" || (mode === "sensorAdded" && liveIds.includes(m.id));
+    const live = (mode === "final" && !offIds.includes(m.id)) || (mode === "sensorAdded" && liveIds.includes(m.id));
     const status: DashStatus | null = mode === "layout" ? null : !live ? "notSetUp" : mode === "sensorAdded" ? "running" : m.status === "alarm" ? "fault" : m.status === "idle" ? "idle" : "running";
     return {
       id: m.id, name: m.name, label: displayName(m), short: m.short, type: m.type, zone: m.zone, area: m.area,

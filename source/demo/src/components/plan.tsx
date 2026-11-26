@@ -218,7 +218,7 @@ export function FloorDashboard({ machines, mode, view, onViewChange, selectedId,
   useEffect(() => { pushFraming({ ...DEFAULT_FRAMING }); }, []); // each plan opens at the fit
   const detailCard = sel && detail === "auto" && (
     <MachineDetail m={sel} onClose={() => onSelect(null)} onAddDevice={onAddDevice}
-      onOpen={onOpenMachine && sel.id === "cnc3" ? () => onOpenMachine(sel.id) : undefined} />
+      onOpen={onOpenMachine ? () => onOpenMachine(sel.id) : undefined} />
   );
   return (
     <div ref={dashRef} className={`pp-dash ${className}`} data-view={view} data-mode={mode}>

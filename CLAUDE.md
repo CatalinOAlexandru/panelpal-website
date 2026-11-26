@@ -47,7 +47,17 @@ cd source/site && node ../tools/build-site.mjs   # put the local preview back (T
 `source/site/index.html` and `site/public/` are generated. Do not hand-edit them.
 
 ### Demo (`source/demo/`)
-React 18 + TypeScript + Vite + Tailwind v4, routed with react-router (`/step/:n/:s?`). `src/script.ts` defines the guided steps, `src/steps/Step*.tsx` holds one phone screen per step, and `App.tsx` swaps in full desktop layouts (`Desktop5`, `Desktop7`) on wide screens. Example data lives in `src/data.ts`. The 3D floor (`components/Scene3D.tsx`, `components/floor/`) uses three.js/R3F and is lazy-loaded. `BASE_PATH=./` gives the relative base used for `/demo/`.
+React 18 + TypeScript + Vite + Tailwind v4, routed with react-router (`/step/:n/:s?`). The demo opens on a finished PanelPal, tours it (steps 1 to 4: overview 2D/3D, machines, dashboards and alerts, PanelAI), then walks through adding a new camera and machine (steps 5 and 6: connect a camera, add it to CNC mill 3, calibrate, go live).
+
+- `src/script.ts` defines the steps and stages. Each stage carries a `view` (`src/app/view.ts`): the page of the mock app to show, the world state, and the guided button that pulses.
+- `src/app/` is a mock of the PanelPal web app (ported from `panelpal-monorepo/apps/web`: shell, Machines, Cameras, Dashboards, Alerts, PanelAI, calibration). The stage drives it, and it can still be clicked. Settings and Machine assets show "unavailable in this demo".
+- Example data: `src/app/world.ts` (signals, alerts, downtime, dashboards) and `src/data.ts` (machines). PanelAI answers are written in advance (`src/app/panelai.ts`): no server, no model.
+- Camera feeds (`src/app/feed/`, shown on the Cameras tab and in calibration, not on the Machines tab): one shared three.js renderer draws a low-poly scene per machine (screens, plates of analogue instruments, or gauges on pipes), at about 2 pictures a second. It loads lazily and falls back to the flat view without WebGL. Cameras send pictures only when optional picture sending is on or one is requested.
+- The floor plan (2D and 3D: `components/plan.tsx`, `Scene3D.tsx`, `components/floor/`) is the earlier demo plan, reused. 3D is lazy-loaded.
+- Camera set-up shows the target design: the camera reads the screen itself and sends readings, and sending pictures to the server is optional. In the product this is "reading on the camera" (`docs/ESP-EDGE-READING.md` in the monorepo, not built yet).
+- `tools/hero-phone.mjs` screenshots step 2, stage 2 at 390 px for the site hero phone.
+
+`BASE_PATH=./` gives the relative base used for `/demo/`.
 
 `tools/sync-design-assets.sh` copies (never edits) the design assets the demo uses into `demo/public/` and rewrites the import paths in `design/plan2d/FloorPlan2D.tsx` into `demo/src/plan/visual/`.
 
