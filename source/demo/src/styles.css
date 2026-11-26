@@ -48,7 +48,7 @@
   56%, 94% { box-shadow: 0 0 0 0 #fff, 0 0 0 0 rgba(26, 140, 255, 0), 0 0 0 0 rgba(26, 140, 255, 0); }
   100% { transform: scale(1); box-shadow: 0 0 0 2px #fff, 0 0 0 5px #1a8cff, 0 0 18px 8px rgba(26, 140, 255, 0.75); }
 }
-:root { --guide-pulse-duration: 1s; }
+:root { --guide-pulse-duration: 3s; } /* 25 Nov (Catalin): 1 s was too fast; 3 s. */
 .guide-pulse:not([aria-disabled="true"]):not(:disabled):not(:hover):not(:focus-visible):not(:active) { animation: guide-pulse var(--guide-pulse-duration) ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .guide-pulse:not([aria-disabled="true"]):not(:disabled):not(:hover):not(:focus-visible):not(:active) { animation: none; box-shadow: 0 0 0 2px #fff, 0 0 0 5px #1a8cff, 0 0 14px 4px rgba(26, 140, 255, 0.6); }
