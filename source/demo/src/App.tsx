@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { STEPS } from "./script";
 import { DemoCtx, useTick, type DemoApi } from "./demo";
-import { Banner, Logo, Chevron } from "./components/ui";
-import { SITE } from "./data";
+import { Logo, Chevron } from "./components/ui";
+import { ExitDemo, EXIT_OPEN } from "./components/Exit";
 import { PulseCtx } from "./components/Btn";
 import { MockApp, ChatCtx } from "./app/MockApp";
 import { useChatState } from "./app/Chat";
-import { Closing, SITE_HOME } from "./steps/Transition";
+import { Closing } from "./steps/Transition";
 import { Intro } from "./steps/Intro";
 import { FreeRoam } from "./steps/FreeRoam";
 
@@ -57,6 +57,8 @@ function Demo() {
   // Keyboard: arrows, PageUp/PageDown (clickers), space.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // the exit confirm is open: the demo behind it stays where it is
+      if (document.querySelector(`[${EXIT_OPEN}]`)) return;
       const t = e.target as HTMLElement;
       // keys meant for a field, a dropdown or a radio group stay there
       if (t && (["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) || t.isContentEditable || ["radio", "tab", "slider"].includes(t.getAttribute("role") ?? ""))) return;
@@ -79,9 +81,8 @@ function Demo() {
   const lg = useMedia("(min-width: 1024px)");
   const tick = useTick(1000);
   const chat = useChatState();
-  // Interstitial stage (break page): full width on every screen size.
+  // Interstitial stage (the closing page): no mock app.
   const inter = !!def.stages[stage].interstitial;
-  const wide = inter;
   const isLast = step === STEPS.length && stage === def.stages.length - 1;
   // Next-step highlight: the stage's own guided button pulses. Next pulses only when the stage has none.
   // One highlight per stage: the first registered in-page button. Loading stages (autoMs) show no highlight.
@@ -98,41 +99,35 @@ function Demo() {
   return (
     <DemoCtx.Provider value={api}><PulseCtx.Provider value={pulseCtx}><ChatCtx.Provider value={chat}>
       <div className="flex h-dvh flex-col bg-surface-2">
-        <Banner />
-        {/* Mobile and tablet: one thin bar with the PanelPal logo */}
+        {/* 26 Nov (Catalin): no "Demo · example data" banner and no top bar. On a desktop the logo, the steps and Exit demo are in the left panel. */}
+        {/* Mobile and tablet: one thin bar with the PanelPal logo and Exit demo */}
         {!lg && (
           <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border bg-bg px-3">
-            <a href={SITE_HOME} aria-label="PanelPal home page" title="Back to the PanelPal website"><Logo className="h-5" /></a><span className="truncate text-xs text-muted">Demo · {SITE.company}</span>
+            <ExitDemo label="PanelPal: exit the demo" title="Exit the demo"><Logo className="h-5" /></ExitDemo>
+            <span className="min-w-0 flex-1 truncate text-xs text-muted">Demo · example data</span>
+            <ExitDemo className="btn-secondary btn-sm">Exit demo</ExitDemo>
           </div>
         )}
-        {/* Desktop header */}
-        <header className="hidden h-14 shrink-0 items-center gap-4 border-b border-border bg-bg px-6 lg:flex">
-          <a href={SITE_HOME} aria-label="PanelPal home page" title="Back to the PanelPal website"><Logo className="h-6" /></a>
-          <span className="text-sm text-muted">Demo · {SITE.company}</span>
-          <ol className="ml-auto flex items-center gap-1" aria-label="Demo steps">
-            {STEPS.map((s) => (
-              <li key={s.n}>
-                <button onClick={() => go(s.n)} aria-current={s.n === step ? "step" : undefined}
-                  className={`rounded-full px-3 py-1 text-[13px] ${s.n === step ? "bg-accent-soft font-semibold text-accent-strong ring-1 ring-accent" : s.n < step ? "text-text hover:bg-surface-2" : "text-muted hover:bg-surface-2"}`}>
-                  <span className="tnum">{s.n}</span> {s.short}
-                </button>
-              </li>
-            ))}
-          </ol>
-          {wide && (
-            <div className="flex items-center gap-1 border-l border-border pl-3" aria-label="Presenter">
-              <button onClick={back} disabled={isFirst} aria-label="Back" aria-disabled={isFirst || undefined} className="btn-secondary btn-icon"><Chevron dir="left" /></button>
-              <span className="max-w-[160px] truncate text-xs text-muted" title={st.say}>{st.name}</span>
-              <button onClick={next} disabled={isLast} aria-label="Next" aria-disabled={isLast || undefined} className={`btn-primary btn-icon ${nextPulse ? "guide-pulse" : ""}`}><Chevron dir="right" /></button>
-            </div>
-          )}
-        </header>
 
-        <main className={`flex min-h-0 flex-1 ${wide ? "" : "lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-5 lg:px-5 lg:py-4"}`}>
-          {/* Presenter notes (desktop) */}
-          <aside className={`hidden min-h-0 flex-col ${wide ? "" : "lg:flex"}`}>
-            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-[16px] border border-border bg-bg p-5">
-              <div className="text-xs font-semibold uppercase tracking-wide text-faint">Step {step} of {STEPS.length}</div>
+        <main className="flex min-h-0 flex-1 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-5 lg:px-5 lg:py-4">
+          {/* Presenter panel (desktop). Back and Next stay at the bottom; the notes scroll above them. */}
+          <aside className="hidden min-h-0 flex-col overflow-hidden rounded-[16px] border border-border bg-bg lg:flex">
+            <div className="flex shrink-0 items-center justify-between gap-2 px-5 pt-4">
+              <ExitDemo label="PanelPal: exit the demo" title="Exit the demo"><Logo className="h-6" /></ExitDemo>
+              <ExitDemo className="btn-secondary btn-sm">Exit demo</ExitDemo>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-4">
+              <ol className="grid grid-cols-6 gap-1.5" aria-label="Demo steps">
+                {STEPS.map((s) => (
+                  <li key={s.n}>
+                    <button onClick={() => go(s.n)} aria-current={s.n === step ? "step" : undefined} aria-label={`Step ${s.n}: ${s.short}`} title={`${s.n} ${s.short}`}
+                      className={`grid h-8 w-full place-items-center rounded-[8px] text-[13px] font-semibold tnum ${s.n === step ? "border-[1.5px] border-accent bg-accent-soft text-accent-strong" : s.n < step ? "bg-accent text-accent-ink hover:bg-accent-strong" : "border border-border-strong text-muted hover:bg-surface-2"}`}>
+                      {s.n}
+                    </button>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-4 text-xs font-semibold uppercase tracking-wide text-faint">Step {step} of {STEPS.length}</div>
               <h1 className="font-display mt-1 text-[26px] leading-tight">{def.title}</h1>
               <ol className="mt-4 space-y-1.5">
                 {def.stages.filter((x) => !x.interstitial).map((x, i) => (
@@ -148,23 +143,19 @@ function Demo() {
                 <div className="mb-1 text-xs font-semibold text-muted">Say</div>
                 {st.say}
               </div>
-              <div className="mt-auto pt-4">
-                <div className="flex gap-2">
-                  <button onClick={back} disabled={isFirst} aria-disabled={isFirst || undefined} className="btn-secondary flex-1"><Chevron dir="left" /> Back</button>
-                  <button onClick={next} disabled={isLast} aria-disabled={isLast || undefined} className={`btn-primary flex-1 ${nextPulse && lg && !wide ? "guide-pulse" : ""}`}>{nextLabel} <Chevron dir="right" /></button>
-                </div>
-                <p className="mt-2 text-center text-xs text-faint">Use the ← and → keys. All data is example data.</p>
+            </div>
+            <div className="shrink-0 border-t border-border px-5 pb-4 pt-3">
+              <div className="flex gap-2">
+                <button onClick={back} disabled={isFirst} aria-disabled={isFirst || undefined} className="btn-secondary flex-1"><Chevron dir="left" /> Back</button>
+                <button onClick={next} disabled={isLast} aria-disabled={isLast || undefined} className={`btn-primary flex-1 ${nextPulse && lg ? "guide-pulse" : ""}`}>{nextLabel} <Chevron dir="right" /></button>
               </div>
+              <p className="mt-2 text-center text-xs text-faint">Use the ← and → keys. All data is example data.</p>
             </div>
           </aside>
 
-          {inter ? (
-            <section className="min-h-0 flex-1" aria-label={st.name}><Closing /></section>
-          ) : (
-            <section className="relative min-h-0 flex-1 overflow-hidden bg-bg lg:rounded-[16px] lg:border lg:border-border" aria-label="App screen">
-              <MockApp key={`${step}.${stage}`} view={st.view} tick={tick} next={next} go={go} />
-            </section>
-          )}
+          <section className="relative min-h-0 flex-1 overflow-hidden bg-bg lg:rounded-[16px] lg:border lg:border-border" aria-label={inter ? st.name : "App screen"}>
+            {inter ? <Closing /> : <MockApp key={`${step}.${stage}`} view={st.view} tick={tick} next={next} go={go} />}
+          </section>
         </main>
 
         {/* Presenter bar (mobile and tablet) */}

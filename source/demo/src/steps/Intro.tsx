@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Btn } from "../components/Btn";
-import { Banner, Chevron, Logo } from "../components/ui";
+import { Chevron, Logo } from "../components/ui";
 import { SITE_HOME } from "./Transition";
 
 /** The first page of the demo. One button leads to step 1. */
@@ -8,7 +8,6 @@ export function Intro() {
   const nav = useNavigate();
   return (
     <div className="flex h-dvh flex-col bg-bg">
-      <Banner />
       <header className="flex h-14 shrink-0 items-center border-b border-border px-5 lg:px-6">
         <a href={SITE_HOME} aria-label="PanelPal home page" title="Back to the PanelPal website"><Logo className="h-6" /></a>
       </header>

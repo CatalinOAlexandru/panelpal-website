@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Banner, Chevron, Logo } from "../components/ui";
-import { SITE } from "../data";
+import { Chevron, Logo } from "../components/ui";
+import { ExitDemo } from "../components/Exit";
 import { useTick } from "../demo";
 import { MockApp, ChatCtx } from "../app/MockApp";
 import { useChatState } from "../app/Chat";
-import { SITE_BOOK, SITE_HOME } from "./Transition";
+import { SITE_BOOK } from "./Transition";
 
 /** After the guided demo: the whole app to click around in. The left side says the data is synthetic and ends the demo. */
 export function FreeRoam() {
@@ -16,15 +16,20 @@ export function FreeRoam() {
   return (
     <ChatCtx.Provider value={chat}>
       <div className="flex h-dvh flex-col bg-surface-2">
-        <Banner />
-        <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-bg px-4 lg:h-14 lg:px-6">
-          <a href={SITE_HOME} aria-label="PanelPal home page" title="Back to the PanelPal website"><Logo className="h-5 lg:h-6" /></a>
-          <span className="truncate text-sm text-muted">Demo · {SITE.company} · Free roam</span>
-          <span className="ml-auto lg:hidden"><a href={SITE_BOOK} className="btn-primary btn-sm" style={{ height: 32 }}>Contact us</a></span>
+        {/* 26 Nov (Catalin): no banner and no top bar on a desktop, as in the guided demo. Mobile and tablet keep one thin bar. */}
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-bg px-3 lg:hidden">
+          <ExitDemo label="PanelPal: exit the demo" title="Exit the demo"><Logo className="h-5" /></ExitDemo>
+          <span className="min-w-0 flex-1 truncate text-xs text-muted">Example data</span>
+          <a href={SITE_BOOK} className="btn-primary btn-sm">Contact us</a>
+          <ExitDemo className="btn-secondary btn-sm">Exit</ExitDemo>
         </header>
         <main className="flex min-h-0 flex-1 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-5 lg:px-5 lg:py-4">
           <aside className="hidden min-h-0 flex-col lg:flex">
-            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-[16px] border border-border bg-bg p-5">
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-[16px] border border-border bg-bg p-5 pt-4">
+              <div className="mb-5 flex items-center justify-between gap-2">
+                <ExitDemo label="PanelPal: exit the demo" title="Exit the demo"><Logo className="h-6" /></ExitDemo>
+                <ExitDemo className="btn-secondary btn-sm">Exit demo</ExitDemo>
+              </div>
               <div className="text-xs font-semibold uppercase tracking-wide text-faint">Free roam</div>
               <h1 className="font-display mt-1 text-[26px] leading-tight">Explore the demo</h1>
               <div className="mt-4 rounded-[10px] bg-surface-2 p-3 text-sm leading-relaxed text-text">
@@ -35,7 +40,6 @@ export function FreeRoam() {
               <div className="mt-auto space-y-2 pt-4">
                 {contact}
                 <button type="button" onClick={() => goStep(1)} className="btn-secondary btn-block">Restart the guided demo</button>
-                <a href={SITE_HOME} className="block pt-1 text-center text-sm font-semibold text-accent-strong underline underline-offset-4 hover:text-accent">End demo</a>
               </div>
             </div>
           </aside>
